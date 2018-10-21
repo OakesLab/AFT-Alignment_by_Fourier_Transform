@@ -1,4 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code can be found at https://github.com/OakesLab/FFT_Alignment
 % Routine to average the alignment vectors produced from FFTAlignment.m in
 % small regions.
 %
