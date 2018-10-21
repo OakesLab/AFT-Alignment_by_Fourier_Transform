@@ -1,4 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code can be found at https://github.com/OakesLab/FFT_Alignment
 % This routine produces a vectorfield of alignment directions using small
 % subwindows in the real space image.  Images should be grayscale images.
 % Angles determined are oriented as follows:
