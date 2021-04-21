@@ -12,7 +12,7 @@
 %                            |
 %                            v  0?
 %
-% Order Parameter value:   0 = Complately random alignment
+% Order Parameter value:   0 = Completely random alignment
 %                          1 = Perfectly aligned
 %
 % Inputs:
@@ -64,95 +64,55 @@
 % http://www.ncbi.nlm.nih.gov/pubmed/25413675
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [FFTAlignmentData] = FFTAlignment(im,winsize,overlap,st,checkpoint,mask_method,maskname,figures)
+function av_ordermat = FFTAlignment(file, directory, parameters)
 
-% Check inputs and set defaults
-if nargin == 1
-    winsize = 33; %Much smaller than 33 and things get dicey.
-    overlap = 0.5; %Shouldn't go less than 0.25
-    st = 2 ; %2*st+1 window size to calculate order parameter
-    checkpoint = 0; % threshhold sum in each window to do the calculation
-    mask_method = 1; %global = 1; local = 2;
-    figures = 1; % plot figures after calculation
-    maskname = []; %Analyzes the entire image
-end
-
-if nargin == 2
-    overlap = 0.5;
-    st = 2 ;
-    checkpoint = 0;
-    mask_method = 1;
-    figures = 1;
-    maskname = [];
-end
-
-if nargin == 3
-    st = 2 ;
-    checkpoint = 0;
-    mask_method = 1;
-    figures = 1;
-    maskname = [];
-end
-
-if nargin == 4
-    checkpoint = 0;
-    mask_method = 1;
-    figures = 1;
-    maskname = [];
-end
-
-% read in image if it isn't already stored
-if ischar(im)
-    im = imread(im);
-end
+% load image
+im = imread(fullfile(directory, file));
+im = im2double(im);
 
 % for masking images to only analyze part of it
-if isempty(maskname)
+if parameters.mask_method == 0 % global
     immask = ones(size(im));
-else
-    if ischar(maskname)
-        immask = logical(imread(maskname));
-    else
-        immask = logical(maskname);
-    end
+else % local
+    immask = logical(imread(parameters.mask_name));
 end
 
-% store parameter values for saving
-paramValues.winsize = winsize;
-paramValues.overlap = overlap;
-paramValues.st = st;
-paramValues.checkpoint = checkpoint;
-paramValues.mask_method = mask_method;
-paramValues.figures = figures;
+% unpack parameters for ease of access
+winsize = parameters.winsize;
+overlap = parameters.overlap;
+st = parameters.st;
+checkpoint = parameters.checkpoint;
 
-% warning off
+% further parameters and initialisations
+if mod(winsize,2) == 0
+    winsize = winsize + 1; % make odd
+end
+
 im2 = zeros(size(im));
 
-im = double(im);
 winrad = floor(winsize/2);
 winspace = ceil(winsize*overlap);
 
-
-% Filter used to remove edge effects of transform
+% filter used to remove edge effects of transform
 gauss_filter = fspecial('gaussian',[winsize winsize],winsize/4);
 
 % mask to apply during moments calculation
-r = 0.75*winrad; % Kind of arbitrary choice.  Just needs to go to zero near edges
+r = 0.75 * winrad; % Kind of arbitrary choice. Just needs to go to zero near edges
 
-% global mask method
-if mask_method == 1
+% global masking method
+if parameters.mask_method == 0 % global
     mask = fspecial('disk',r);
     mask = vertcat(zeros((winsize-size(mask,1))/2,size(mask,2)),mask,zeros((winsize-size(mask,1))/2,size(mask,2)));
     mask = horzcat(zeros(size(mask,1),(winsize-size(mask,2))/2),mask,zeros(size(mask,1),(winsize-size(mask,2))/2));
     mask = logical(mask);
 end
 
-x=repmat(1:winsize,winsize,1);
+x = repmat(1:winsize,winsize,1);
 y = x';
 
 sz = size(im);
 
-% Find points to sample with a window size of 2*winrad+1 and spacing of winspace
+% find points to sample with a window size of 2*winrad+1 and spacing of winspace
 grid_row = winrad+1:winspace:sz(1)-winrad;
 grid_col = winrad+1:winspace:sz(2)-winrad;
 numRows = length(grid_row);
@@ -161,12 +121,12 @@ numCols = length(grid_col);
 % counter
 k = 0;
 
-% Create a matrix to hold all the data we're going to need
-anglemat = zeros(numRows,numCols)*NaN;
+% create a matrix to hold all the data we're going to need
+anglemat = zeros(numRows,numCols) * NaN;
 
-% Sets string format for verbose progress output
+% sets string format for verbose progress output
 strForm = sprintf('%%.%dd',length(num2str(numRows)));
-fprintf('Starting row ');
+fprintf('\nStarting row ');
 
 for i = 1:numRows
     
@@ -192,8 +152,8 @@ for i = 1:numRows
                     
                     window_fft = sqrt(window_fft.*conj(window_fft));
                     
-                    % local mask method
-                    if mask_method == 2
+                    % local masking method
+                    if parameters.mask_method == 1
                         mask = zeros(size(window));
                         pts = window_fft>(2*mean(window_fft(:)));
                         mask(pts) = 1;
@@ -282,12 +242,26 @@ for i = 1:numRows
         end
     end
     
-    %make our verbose output overwrite the previous line
+    % make our verbose output overwrite the previous line
     if i <length(grid_row)
         for jj = 1:(length(procStr)+4+length(num2str(numRows)))
             fprintf(1,'\b');
         end
     end
+end
+
+% plot vectorfield
+if parameters.figures == 1
+    
+    figure
+    imshow(im, [])
+    hold on
+    quiver(pc,pr,vc2,ur2,0,'y','showarrowhead','off','linewidth',2)
+    im_out = getframe(gcf);
+    im_out = im_out.cdata;
+    imwrite(im_out, fullfile(directory, ['vectors_' file(1:end-4) '.tif']));
+    close
+    
 end
 
 % Calculate the order parameter
@@ -303,48 +277,6 @@ for i = st+1:size(anglemat,1)-st
         clear temp temp2 comp
     end
 end
+av_ordermat = nanmedian(ordermat(:));
 
-% convert angle matrix to degrees
-anglemat = anglemat.*180/pi;
-
-% make a histogram of the angles
-bin = (5:10:175)';
-[val bin] = hist(anglemat(:),bin);
-N = sum(val);
-valnorm = (val/sum(val))';
-
-pos = [pc', pr'];
-vec = [vc2', ur2'];
-% store data
-FFTAlignmentData.anglemat = anglemat;
-FFTAlignmentData.ordermat = ordermat;
-FFTAlignmentData.pos = pos; %vector base positions [col row]
-FFTAlignmentData.vec = vec; %vector direction components [coldisp rowdisp]
-FFTAlignmentData.hist_bins = bin;
-FFTAlignmentData.hist_val = val;
-FFTAlignmentData.hist_val_norm = valnorm;
-FFTAlignmentData.parameters = paramValues;
-
-if figures == 1
-    % display images with vector alignment
-    figure
-    imshow(im,[min(im(:)) max(im(:))*.8])
-    hold on
-    % because of the way the image axes are oriented you
-    % quiver(column,row,coldisp,rowdisp,noscaling,color)
-    quiver(pc,pr,vc2,ur2,0,'g')
-    % if you want to plot the vectors pointing in the opposite direction
-    % quiver(pc,pr,vc,ur,0,'r')
-    
-    % display a histogram of vector orientations
-    figure
-    bar(bin,val);
-    title('Histogram of Vector Orientations')
-    
-    figure
-    imshow(ordermat,[],'InitialMagnification',500)
-    colormap('jet')
-end
-
-fprintf('\nFinished!\n')
 end
