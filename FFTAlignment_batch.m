@@ -38,7 +38,7 @@ save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
 
 % store parameters for analysis
 parameters.winsize = str2double(user_answer{1,1});  
-parameters.overlap = str2double(user_answer{2,1})/100;  
+parameters.overlap = 1-str2double(user_answer{2,1})/100;  
 parameters.st = round((str2double(user_answer{3,1})- 1)/2); 
 parameters.mask_method = str2double(user_answer{4,1}); % global = 1; local = 2;
 parameters.figures = str2double(user_answer{5,1});
