@@ -8,7 +8,7 @@ parent_d = uigetdir('');
 
 matlab_folder = cd;
 cd(parent_d)
-listing = dir('**/*.tif');
+listing = dir('*.tif');
 
 cd(matlab_folder)
 
@@ -33,19 +33,17 @@ parameters.figures = str2double(user_answer{5,1});
 parameters.checkpoint = 0; % threshhold sum in each window to do the calculation
 
 % load masks if masking method == local
-if parameters.mask_method == 2
+if parameters.mask_method == 1
     
     uiwait(msgbox('Load folder containing masks'));
     masks_d = uigetdir('');
 
     matlab_folder = cd;
     cd(masks_d)
-    listing_masks = dir('**/*.tif');
+    listing_masks = dir('*.tif');
 
     cd(matlab_folder)
 end
-
-% maskname = []; % Analyzes the entire image
 
 
 %% open one file at a time and perform analysis %%
@@ -60,7 +58,7 @@ for file_list = 1:n_files
     directory = listing(file_list).folder;
     
     % file and directory name for mask (if local)
-    if parameters.mask_method == 2
+    if parameters.mask_method == 1
         file_mask = listing_masks(file_list).name;
         directory_mask = listing_masks(file_list).folder;
         parameters.mask_name = fullfile(directory_mask,file_mask);
