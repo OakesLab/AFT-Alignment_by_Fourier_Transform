@@ -1,59 +1,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Code can be found at https://github.com/OakesLab/FFT_Alignment
-% This routine produces a vectorfield of alignment directions using small
-% subwindows in the real space image.  Images should be grayscale images.
+% Code and documentation can be found at 
+% https://github.com/OakesLab/FFT_Alignment
+%
+% This routine uses a vector field of alignment directions using small
+% sub-windows in the real space image to calculate an alignment order
+% parameter.  Images should be grayscale images.
 % Angles determined are oriented as follows:
 %
-%                            ^  180?
+%                            ^  180°
 %                            |
 %                            |
-%                            ------>  90?
+%                            ------>  90°
 %                            |
 %                            |
-%                            v  0?
+%                            v  0°
 %
 % Order Parameter value:   0 = Completely random alignment
 %                          1 = Perfectly aligned
-%
-% Inputs:
-%       im          = the image to analyze. Can be any bit-depth. Can input
-%                     as a matrix or as a filename
-%       winsize     = Size of the sub windows. Must be odd. (Default is 33)
-%       overlap     = How much the windows overlap. Value should be between 0
-%                     (complete overlap) and 1 (no overlap). (Default is
-%                     0.5)
-%       st          = order parameter spacing. Considers a window of size
-%                     2*st+1 to compare vectors to. Depending on the
-%                     overlap size, you'll want to change this. (Default is
-%                     2)
-%       checkpoint  = threshold value above which to do the caculation. The
-%                     sum of the image intensity in the window needs to be
-%                     above this value for the routine to calculate a vector
-%                     for the given window (Default is 0 - i.e. every
-%                     window)
-%       mask_method = Determines the method to mask the FFT when
-%                     determining the moment calculation. Global (val = 1) uses
-%                     a circle for every window. Local (val = 2) uses a
-%                     local threshold for each subwindow. (Default = 1)
-%       maskname    = Should be a logical mask the same size as im. Will
-%                     only analyze regions where the mask is true. An
-%                     empty input will analyze the entire image. Can input
-%                     as a matrix or a filename
-%       figures     = Plot figures. 0 = No; 1 = Yes; (Default = 1)
-%
-%
-% Outputs:
-%       Everything is stored in a structure file FFTAlignmentData
-%       anglemat     = A matrix of the calculated alignment direction in degrees.
-%       ordermat     = A matrix of the calculated order parameter;
-%       pos          = row and column positions for each vector
-%       vec          = vector direction components [coldisp rowdisp]
-%       hist_bins    = bin values for the histogram of angles
-%       hist_val     = # of angles in each bin
-%       his_val_norm = normalized values of the histogram
-%       parameters   = parameters used in the routine
-%
-%
+% 
 % All rights and permissions belong to:
 % Patrick Oakes
 % poakes@gmail.com
