@@ -10,6 +10,9 @@ matlab_folder = cd;
 cd(parent_d)
 listing = dir('*.tif');
 
+% create output folder
+mkdir('output')
+
 cd(matlab_folder)
 
 %% set parameters %%
@@ -69,5 +72,5 @@ for file_list = 1:n_files
     
 end
 
-save(fullfile(parent_d, 'average_ordermat.mat'), 'av_ordermat');
+save(fullfile([parent_d '/output'], 'average_ordermat.mat'), 'av_ordermat');
 clear; clc
