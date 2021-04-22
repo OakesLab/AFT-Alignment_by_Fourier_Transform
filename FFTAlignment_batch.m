@@ -82,5 +82,11 @@ for file_list = 1:n_files
     
 end
 
-save(fullfile([parent_d '/output'], 'average_ordermat.mat'), 'av_ordermat');
+% save order parameter
+save(fullfile([parent_d '/output'], 'median_order_parameter.mat'), 'av_ordermat');
+
+T = table(av_ordermat);
+T.Properties.VariableNames = {'median_order_parameter'};
+writetable(T,fullfile([parent_d '/output'], 'median_order_parameter.csv'))
+
 clear; clc
