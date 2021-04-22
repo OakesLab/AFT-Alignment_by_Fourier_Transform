@@ -17,6 +17,7 @@ cd(matlab_folder)
 
 %% set parameters %%
 
+% user input dialog
 prompt = {'Window size [px]', ...
     'Window overlap [%]',...
     'Neighbourhood size [vectors]',...
@@ -27,6 +28,15 @@ dims = [1 50];
 definput = {'250','50','5','0', '1'};
 user_answer = inputdlg(prompt,prompt_title,dims,definput);
 
+% save parameters in [output] folder
+parameters_save.winsize_px = str2double(user_answer{1,1});
+parameters_save.overlap_percentage = str2double(user_answer{2,1});
+parameters_save.neighbourhood_vectors = str2double(user_answer{3,1});
+parameters_save.mask_method = str2double(user_answer{4,1});
+parameters_save.figures = str2double(user_answer{5,1});
+save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
+
+% store parameters for analysis
 parameters.winsize = str2double(user_answer{1,1});  
 parameters.overlap = str2double(user_answer{2,1})/100;  
 parameters.st = round((str2double(user_answer{3,1})- 1)/2); 
