@@ -42,7 +42,7 @@ for window_list = 1:length(win_size_array)
         im = im2double(im);
         
         % call function to calculate vector field
-        anglemat = FFTAlignment_parameter_search(im, win_size, win_rad, win_space);
+        anglemat = FFTAlignment_parameter_search_anglemat(im, win_size, win_rad, win_space);
             
         % for every neighbourhood size
         n_win = length(win_rad+1:win_space:im_size-win_rad);
@@ -51,7 +51,7 @@ for window_list = 1:length(win_size_array)
             st = neighbourhood_list;	% 2*st+1 window size to calculate order parameter
             
             % output -> rows: each image, cols: neighbourhoods
-            av_ordermat(file_list,st) = FFTAlignment_parameter_search_order(anglemat,st);
+            av_ordermat(file_list,st) = FFTAlignment_parameter_search_ordermat(anglemat,st);
         end
         
     end
