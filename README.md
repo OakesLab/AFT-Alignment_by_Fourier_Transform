@@ -6,9 +6,9 @@ This analysis was produced for [Cetera et al. Nat Commun 2014; 5:1-12](http://ww
 link and citation will be added in due course.
 
 ## FFTAlignment_batch.m
-This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the function `FFTAlignment.m`
+This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the function `FFTAlignment.m`.
   * _Input_: a folder containing grayscale images in .tif format
-  * _Output_: an array containing an alignment order parameter averaged across each image
+  * _Output_: an array containing an alignment order parameter averaged across each image; analysis parameters; input images overlaid with angle vector field (optional)
   * _Parameters_:
     * `Window size [px]` = Size of the sub-windows in pixel
     * `Window overlap [%]` = Percentage of window overlap
@@ -29,3 +29,13 @@ Angles determined are oriented as follows:
 Order parameter values:     
   * 0 = Completely random alignment
   * 1 = Perfectly aligned
+
+
+## FFTAlignment_batch_parameter_search.m
+This routine is based on `FFTAlignment_batch.m` and can be used to search for a parameter set where the difference in alignment between two sample populations is more pronounced. The order parameter is calculated for a range of window and neighbourhood sizes; overlap is set to 50% and the masking method is set to global (the whole image is analysed). The median order parameter calculated for each permutation of window and neighbourhood sizes is compared between the two population, either by looking at their difference (sample 1 - sample 2) or the p-value of a non-parameteric statistical comparison (Mann-Whitney test). It calls the functions `FFTAlignment_parameter_search_main.m`, `FFTAlignment_parameter_search_anglemat`, `FFTAlignment_parameter_search_ordermat`.
+
+* _Input_: two separate folders containing grayscale images in .tif format for the 2 samples to be compared
+* _Output_: a cell array containing an alignment order parameter averaged across each image for each window and neighbourhood sizes; analysis parameters; heatmaps for order parameter comparison (difference and p-value)
+* _Parameters_:
+  * `Minimum window size [px]` = Size of the smallest sub-window to be tested (in pixel)
+  * `Window size interval [px]` = Interval between subsequent sub-window sizes to be tested (in pixel)
