@@ -47,9 +47,9 @@ save(fullfile([parent_d2 '/output_parameter_search'], 'parameters.mat'), 'parame
 av_ordermat_output1 = FFTAlignment_parameter_search_main(listing1, parameters_save);
 av_ordermat_output2 = FFTAlignment_parameter_search_main(listing2, parameters_save);
 
-%% plot results %%
-% unpack cells (median values across all images in a sample)
+%% calculate median values and p-values %%
 
+% unpack cells (median values across all images in a sample)
 n_windows = length(av_ordermat_output1);
 n_neighbourhoods = size(av_ordermat_output1{1,1},2);
 av_ordermat1 = NaN(n_windows, n_neighbourhoods);
@@ -75,25 +75,95 @@ for k = 1:length(av_ordermat_output1)
     
 end
 
+% calculate p-value (Mann-Whitney test)
+p_median = NaN(size(av_ordermat1));
+
+for k = 1:length(av_ordermat_output1)
+    
+    % for each cell (window size)
+    temp1 = av_ordermat_output1{k,1};
+    temp2 = av_ordermat_output2{k,1};
+    
+    % Mann-Whitney of all possible combinations of window/neighbourhood size
+    for kk = 1:size(temp1,2)
+        
+        x_median = temp1(:,kk);
+        y_median = temp2(:,kk);
+        p_median(k,kk) = ranksum(x_median,y_median);
+        
+    end  
+    
+end
+
+%% plot results %%
 % heatmap difference (sample1 - sample2)
 figure
-imagesc(av_ordermat1-av_ordermat2)
+h = imagesc(av_ordermat1-av_ordermat2);
 title('Order parameter difference (1st sample - 2nd sample)')
 colormap('jet');
-caxis([0 1])
+colorbar()
 
-xlabel('Neighbourhood [n of vectors]')
-ylabel('Window size [px]')
+% NaNs as black
+set(h, 'AlphaData', ~isnan(av_ordermat1-av_ordermat2))
+axis on
+set(gca, 'Color', 'k')
 
-%% check from here
-yticks(1:n_windows);
-yticklabels([10,20,29,39,49,59,69,79,89,99,109,119,129,139]);
-
-xlabel('Neighbourhood [n of vectors]')
-ylabel('Window size [µm]')
-
-% xticks([5 10 15 20 25])
-% xticklabels({'15x','30x','45x','60x','75x'})
-xticklabels({'15x','30x','45x','60x','75x','90x','105x','120x'})
-
+% labels
+xlabel('Neighbourhood (vectors)')
+ylabel('Window size (px)')
 set(findall(gcf, '-property', 'FontSize'), 'FontSize', 14)
+
+x_tick = 1:n_neighbourhoods;
+neighbourhood_list = x_tick*2+1; % neighbourhood = 2*st+1
+x_label = string(neighbourhood_list);
+x_label = x_label + 'x';
+
+xticks(x_tick);
+xticklabels(x_label);
+xtickangle(45)
+yticks(1:n_windows);
+yticklabels(parameters_save.min_winsize_px:parameters_save.winsize_int_px:n_windows*parameters_save.min_winsize_px);
+
+% save
+im_out = getframe(gcf);
+im_out = im_out.cdata;
+imwrite(im_out, fullfile([parent_d1 '/output_parameter_search'], 'parameter_search_difference.tif'));
+imwrite(im_out, fullfile([parent_d2 '/output_parameter_search'], 'parameter_search_difference.tif'));
+close
+
+% heatmap p-value 
+figure
+h1 = imagesc(p_median);
+title('p-value (Mann-Whitney)');
+colormap('jet');
+colorbar();
+
+% NaNs as black
+set(h1, 'AlphaData', ~isnan(av_ordermat1-av_ordermat2))
+axis on
+set(gca, 'Color', 'k')
+
+% labels
+xlabel('Neighbourhood (vectors)')
+ylabel('Window size (px)')
+set(findall(gcf, '-property', 'FontSize'), 'FontSize', 14)
+
+x_tick = 1:n_neighbourhoods;
+neighbourhood_list = x_tick*2+1; % neighbourhood = 2*st+1
+x_label = string(neighbourhood_list);
+x_label = x_label + 'x';
+
+xticks(x_tick);
+xticklabels(x_label);
+xtickangle(45)
+yticks(1:n_windows);
+yticklabels(parameters_save.min_winsize_px:parameters_save.winsize_int_px:n_windows*parameters_save.min_winsize_px);
+
+% save
+im_out = getframe(gcf);
+im_out = im_out.cdata;
+imwrite(im_out, fullfile([parent_d1 '/output_parameter_search'], 'parameter_search_p-value.tif'));
+imwrite(im_out, fullfile([parent_d2 '/output_parameter_search'], 'parameter_search_p-value.tif'));
+close
+
+clear; clc
