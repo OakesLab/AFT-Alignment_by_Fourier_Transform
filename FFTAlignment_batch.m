@@ -17,11 +17,7 @@ cd(matlab_folder)
 
 %% user input and set parameters %%
 
-[parameters_save, parameters, listing_masks] = user_input();
-
-% save parameters in [output] folder
-save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
-
+[parameters, listing_masks] = user_input();
 
 %% open one file at a time and perform analysis %%
 

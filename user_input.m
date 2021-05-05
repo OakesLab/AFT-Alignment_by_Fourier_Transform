@@ -1,4 +1,4 @@
-function [parameters_save, parameters, listing_masks] = user_input()
+function [parameters, listing_masks] = user_input()
 
 % user input dialog
 prompt = {'Window size [px]', ...
@@ -87,5 +87,8 @@ if filter_images == 1
         
     end
 end
+
+% save parameters in [output] folder
+save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
 
 end
