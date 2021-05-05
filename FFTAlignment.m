@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Code and documentation can be found at 
+% Code and documentation can be found at
 % https://github.com/OakesLab/FFT_Alignment
 %
 % This routine uses a vector field of alignment directions using small
@@ -17,7 +17,7 @@
 %
 % Order Parameter value:   0 = Completely random alignment
 %                          1 = Perfectly aligned
-% 
+%
 % All rights and permissions belong to:
 % Patrick Oakes
 % poakes@gmail.com
@@ -46,6 +46,7 @@ winsize = parameters.winsize;
 overlap = parameters.overlap;
 st = parameters.st;
 checkpoint = parameters.checkpoint;
+coherency_threshold = parameters.coherency_threshold;
 
 % further parameters and initialisations
 if mod(winsize,2) == 0
@@ -107,7 +108,7 @@ for i = 1:numRows
             
             % Create a checkpoint for doing calculation if sum of signal is
             % insignificant (i.e. if it's just blackspace)
-            if sum(window(:)) > checkpoint
+            if mean(window(:)) > checkpoint
                 
                 window_fft = fftshift(fft2(window.*gauss_filter));
                 im2(grid_row(i)-winrad:grid_row(i)+winrad,grid_col(j)-winrad:grid_col(j)+winrad) = window_fft;
@@ -151,6 +152,11 @@ for i = 1:numRows
                     mu02 = M02/M00-yave^2;
                     mu11 = M11/M00-xave*yave;
                     
+                    % calculate the fft eigenvalues and coherency
+                    lambda1 = (mu20+mu02)/2 + (sqrt((4*mu11)^2 + (mu20-mu02)^2))/2;
+                    lambda2 = (mu20+mu02)/2 - (sqrt((4*mu11)^2 + (mu20-mu02)^2))/2;
+                    coherency = (lambda1-lambda2)/(lambda1+lambda2);
+                     
                     % Angle of axis of the least second moment
                     theta = 0.5*atan(2*mu11/(mu20-mu02));
                     
@@ -189,19 +195,21 @@ for i = 1:numRows
                     end
                     
                     anglemat(i,j) = theta;
-                    
-                    
+                      
                 else
                     anglemat(i,j) = NaN;
                 end
                 
-                pr(k) = grid_row(i);
-                pc(k) = grid_col(j);
-                ur(k) = -1*floor(winrad/2)*cos(theta);
-                vc(k) = -1*floor(winrad/2)*sin(theta);
-                ur2(k) = floor(winrad/2)*cos(theta);
-                vc2(k) = floor(winrad/2)*sin(theta);
-                ang(k,1) = theta;
+                % filter on coherency (if required, by default the threshold is set to 0 if not changed by user)
+                if coherency > coherency_threshold
+                    pr(k) = grid_row(i);
+                    pc(k) = grid_col(j);
+                    ur(k) = -1*floor(winrad/2)*cos(theta);
+                    vc(k) = -1*floor(winrad/2)*sin(theta);
+                    ur2(k) = floor(winrad/2)*cos(theta);
+                    vc2(k) = floor(winrad/2)*sin(theta);
+                    ang(k,1) = theta;
+                end
             end
         end
     end

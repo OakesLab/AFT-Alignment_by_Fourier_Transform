@@ -44,6 +44,7 @@ parameters.checkpoint = 0;
 parameters.mask_method = 0;
 parameters.filter_blank = 0;
 parameters.filter_isotropic = 0;
+parameters.coherency_threshold = 0;
 listing_masks = [];
 
 if filter_images == 1
@@ -74,18 +75,33 @@ if filter_images == 1
         
         cd(matlab_folder)
     end
-        
+    
+    % if blank regions to be discarded
     if str2double(user_answer_filter{2,1}) == 1
         
-        prompt_blank = {'Set mean intensity value of blank regions (0-255)'};
+        prompt_blank = {'Set mean intensity value of blank regions (0:black - 255:white)'};
         prompt_blank_title = 'Blank regions';
         definput_blank = {'0'};
         user_answer_blank = inputdlg(prompt_blank, prompt_blank_title, dims, definput_blank);
         
         parameters_save.filter_blank_value = str2double(user_answer_blank{1,1});
-        parameters.checkpoint = parameters_save.filter_blank_value; % threshold sum in each window to do the calculation
+        parameters.checkpoint = parameters_save.filter_blank_value / 255; % threshold mean in each window to do the calculation
         
     end
+    
+    % if isotropic regions to be discarded
+    if str2double(user_answer_filter{3,1}) == 1
+        
+        prompt_isotropic = {'Set threshold for FFT coherency (0:isotropic - 1:highly oriented)'};
+        prompt_isotropic_title = 'Isotropic regions';
+        definput_isotropic = {'0'};
+        user_answer_isotropic = inputdlg(prompt_isotropic, prompt_isotropic_title, dims, definput_isotropic);
+        
+        parameters_save.filter_isotropic_value = str2double(user_answer_isotropic{1,1});
+        parameters.coherency_threshold = parameters_save.filter_isotropic_value; % threshold FFT coherency in each window to do the calculation
+        
+    end
+    
 end
 
 % save parameters in [output] folder
