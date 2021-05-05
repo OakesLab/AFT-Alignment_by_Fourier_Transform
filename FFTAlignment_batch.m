@@ -17,7 +17,7 @@ cd(matlab_folder)
 
 %% user input and set parameters %%
 
-[parameters, listing_masks] = user_input();
+[parameters, listing_masks] = user_input(parent_d);
 
 %% open one file at a time and perform analysis %%
 

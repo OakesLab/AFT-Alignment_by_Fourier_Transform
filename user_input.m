@@ -1,4 +1,4 @@
-function [parameters, listing_masks] = user_input()
+function [parameters, listing_masks] = user_input(parent_d)
 
 % user input dialog
 prompt = {'Window size [px]', ...
