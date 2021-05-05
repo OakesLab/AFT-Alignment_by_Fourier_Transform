@@ -15,48 +15,12 @@ mkdir('output')
 
 cd(matlab_folder)
 
-%% set parameters %%
+%% user input and set parameters %%
 
-% user input dialog
-prompt = {'Window size [px]', ...
-    'Window overlap [%]',...
-    'Neighbourhood size [vectors]',...
-    'Masking method (local = 1, global = 0)',...
-    'Display figures (yes = 1, no = 0)'};
-prompt_title = 'Parameters';
-dims = [1 50];
-definput = {'250','50','5','0', '1'};
-user_answer = inputdlg(prompt,prompt_title,dims,definput);
+[parameters_save, parameters, listing_masks] = user_input();
 
 % save parameters in [output] folder
-parameters_save.winsize_px = str2double(user_answer{1,1});
-parameters_save.overlap_percentage = str2double(user_answer{2,1});
-parameters_save.neighbourhood_vectors = str2double(user_answer{3,1});
-parameters_save.mask_method = str2double(user_answer{4,1});
-parameters_save.figures = str2double(user_answer{5,1});
 save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
-
-% store parameters for analysis
-parameters.winsize = str2double(user_answer{1,1});  
-parameters.overlap = 1-str2double(user_answer{2,1})/100;  
-parameters.st = round((str2double(user_answer{3,1})- 1)/2); 
-parameters.mask_method = str2double(user_answer{4,1}); % global = 1; local = 2;
-parameters.figures = str2double(user_answer{5,1});
-
-parameters.checkpoint = 0; % threshhold sum in each window to do the calculation
-
-% load masks if masking method == local
-if parameters.mask_method == 1
-    
-    uiwait(msgbox('Load folder containing masks'));
-    masks_d = uigetdir('');
-
-    matlab_folder = cd;
-    cd(masks_d)
-    listing_masks = dir('*.tif');
-
-    cd(matlab_folder)
-end
 
 
 %% open one file at a time and perform analysis %%
