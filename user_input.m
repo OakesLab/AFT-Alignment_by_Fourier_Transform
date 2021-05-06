@@ -44,7 +44,7 @@ parameters.checkpoint = 0;
 parameters.mask_method = 0;
 parameters.filter_blank = 0;
 parameters.filter_isotropic = 0;
-parameters.coherency_threshold = 0;
+parameters.eccentricity_threshold = 0;
 listing_masks = [];
 
 if filter_images == 1
@@ -92,13 +92,13 @@ if filter_images == 1
     % if isotropic regions to be discarded
     if str2double(user_answer_filter{3,1}) == 1
         
-        prompt_isotropic = {'Set threshold for FFT coherency (0:isotropic - 1:highly oriented)'};
+        prompt_isotropic = {'Set threshold for FFT eccentricity (0:isotropic - 1:highly oriented)'};
         prompt_isotropic_title = 'Isotropic regions';
         definput_isotropic = {'0'};
         user_answer_isotropic = inputdlg(prompt_isotropic, prompt_isotropic_title, dims, definput_isotropic);
         
         parameters_save.filter_isotropic_value = str2double(user_answer_isotropic{1,1});
-        parameters.coherency_threshold = parameters_save.filter_isotropic_value; % threshold FFT coherency in each window to do the calculation
+        parameters.eccentricity_threshold = parameters_save.filter_isotropic_value; % threshold FFT eccentricity in each window to do the calculation
         
     end
     

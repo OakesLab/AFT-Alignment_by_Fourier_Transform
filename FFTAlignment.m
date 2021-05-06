@@ -46,7 +46,7 @@ winsize = parameters.winsize;
 overlap = parameters.overlap;
 st = parameters.st;
 checkpoint = parameters.checkpoint;
-coherency_threshold = parameters.coherency_threshold;
+eccentricity_threshold = parameters.eccentricity_threshold;
 
 % further parameters and initialisations
 if mod(winsize,2) == 0
@@ -152,10 +152,10 @@ for i = 1:numRows
                     mu02 = M02/M00-yave^2;
                     mu11 = M11/M00-xave*yave;
                     
-                    % calculate the fft eigenvalues and coherency
+                    % calculate the fft eigenvalues and eccentricity
                     lambda1 = (mu20+mu02)/2 + (sqrt((4*mu11)^2 + (mu20-mu02)^2))/2;
                     lambda2 = (mu20+mu02)/2 - (sqrt((4*mu11)^2 + (mu20-mu02)^2))/2;
-                    coherency = (lambda1-lambda2)/(lambda1+lambda2);
+                    eccentricity = sqrt(1-(lambda2/lambda1));
                      
                     % Angle of axis of the least second moment
                     theta = 0.5*atan(2*mu11/(mu20-mu02));
@@ -200,8 +200,8 @@ for i = 1:numRows
                     anglemat(i,j) = NaN;
                 end
                 
-                % filter on coherency (if required, by default the threshold is set to 0 if not changed by user)
-                if coherency > coherency_threshold
+                % filter on eccentricity (if required, by default the threshold is set to 0 if not changed by user)
+                if eccentricity > eccentricity_threshold
                     pr(k) = grid_row(i);
                     pc(k) = grid_col(j);
                     ur(k) = -1*floor(winrad/2)*cos(theta);
