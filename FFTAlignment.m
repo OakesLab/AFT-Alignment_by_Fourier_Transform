@@ -58,9 +58,6 @@ im2 = zeros(size(im));
 winrad = floor(winsize/2);
 winspace = ceil(winsize*overlap);
 
-% filter used to remove edge effects of transform
-gauss_filter = fspecial('gaussian',[winsize winsize],winsize/4);
-
 % mask to apply during moments calculation
 r = 0.75 * winrad; % Kind of arbitrary choice. Just needs to go to zero near edges
 
