@@ -15,6 +15,9 @@ win_size_array = min_win_size_px:interval_win_size_px:max_win_size_px;
 cond =  mod(win_size_array,2) == 0; % number is even
 win_size_array(cond) = win_size_array(cond) - 1;
 
+% set overlap to value selected by user
+overlap = 1 - parameters.overlap_percentage/100;
+
 %% open one file at a time and perform analysis %%
 
 n_files = length(listing);
@@ -25,7 +28,6 @@ for window_list = 1:length(win_size_array)
     
     win_size = win_size_array(window_list);	% [px] has to be odd
     
-    overlap = 0.5; % fixed at 50%
     win_rad = floor(win_size/2);
     win_space = ceil(win_size*overlap);
     

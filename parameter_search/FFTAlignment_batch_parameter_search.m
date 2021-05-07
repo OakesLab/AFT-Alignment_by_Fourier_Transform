@@ -31,15 +31,17 @@ cd(matlab_folder)
 
 % user input dialog
 prompt = {'Minimum window size [px]', ...
-    'Window size interval [px]'};
+    'Window size interval [px]', ...
+    'Window overlap (fixed parameter) [%]'};
 prompt_title = 'Parameters';
 dims = [1 50];
-definput = {'50','50'};
+definput = {'50','50','50'};
 user_answer = inputdlg(prompt,prompt_title,dims,definput);
 
 % save parameters in [output_parameter_search] folder (for both samples)
 parameters_save.min_winsize_px = str2double(user_answer{1,1});
 parameters_save.winsize_int_px = str2double(user_answer{2,1});
+parameters_save.overlap_percentage = str2double(user_answer{2,1});
 save(fullfile([parent_d1 '/output_parameter_search'], 'parameters.mat'), 'parameters_save');
 save(fullfile([parent_d2 '/output_parameter_search'], 'parameters.mat'), 'parameters_save');
 
