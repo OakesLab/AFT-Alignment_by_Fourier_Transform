@@ -232,7 +232,9 @@ if parameters.figures == 1
     figure
     imshow(im, [])
     hold on
-    quiver(pc,pr,vc2,ur2,0,'y','showarrowhead','off','linewidth',2)
+    if exist('pc','var') ~= 0
+        quiver(pc,pr,vc2,ur2,0,'y','showarrowhead','off','linewidth',2)
+    end
     im_out = getframe(gcf);
     im_out = im_out.cdata;
     imwrite(im_out, fullfile([directory '/output'], ['vectors_' file(1:end-4) '.tif']));
