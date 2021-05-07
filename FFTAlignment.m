@@ -110,7 +110,11 @@ for i = 1:numRows
             % insignificant (i.e. if it's just blackspace)
             if mean(window(:)) > checkpoint
                 
-                window_fft = fftshift(fft2(window.*gauss_filter));
+                % separate out the periodic and smooth components
+                [im_window_periodic, ~] = periodic_decomposition(window);
+                % take the FFT of the periodic component
+                window_fft = fftshift(fft2(im_window_periodic));
+                
                 im2(grid_row(i)-winrad:grid_row(i)+winrad,grid_col(j)-winrad:grid_col(j)+winrad) = window_fft;
                 k = k + 1;
                 if sum(window_fft(:)) ~= 0
