@@ -28,16 +28,13 @@
 % http://www.ncbi.nlm.nih.gov/pubmed/25413675
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function anglemat = FFTAlignment_parameter_search(im, winsize, winrad, winspace)
+function anglemat = FFTAlignment_parameter_search_anglemat(im, winsize, winrad, winspace)
 
 % set further parameters
 checkpoint = 0; % threshhold sum in each window to do the calculation
 mask_method = 0;	% global = 0; local = 1;
 
 im2 = zeros(size(im));
-
-% filter used to remove edge effects of transform
-gauss_filter = fspecial('gaussian',[winsize winsize],winsize/4);
 
 % mask to apply during moments calculation
 r = 0.75 * winrad; % Kind of arbitrary choice. Just needs to go to zero near edges
@@ -84,9 +81,13 @@ for i = 1:numRows
         
         % Create a checkpoint for doing calculation if sum of signal is
         % insignificant (i.e. if it's just blackspace)
-        if sum(window(:)) > checkpoint
+        if mean(window(:)) > checkpoint
             
-            window_fft = fftshift(fft2(window.*gauss_filter));
+            % separate out the periodic and smooth components
+            [im_window_periodic, ~] = periodic_decomposition(window);
+            % take the FFT of the periodic component
+            window_fft = fftshift(fft2(im_window_periodic));
+                
             im2(grid_row(i)-winrad:grid_row(i)+winrad,grid_col(j)-winrad:grid_col(j)+winrad) = window_fft;
             k = k + 1;
             if sum(window_fft(:)) ~= 0
