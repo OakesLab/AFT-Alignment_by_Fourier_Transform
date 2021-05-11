@@ -5,7 +5,7 @@ Algorithms to calculate fibre alignment from biological images can be found in t
 This analysis was produced for [Cetera et al. Nat Commun 2014; 5:1-12](http://www.ncbi.nlm.nih.gov/pubmed/25413675). A methods paper is currently in preparation, link and citation will be added in due course.
 
 ## FFTAlignment_batch.m
-This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m` and `user_input.m`.
+This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m`, `user_input.m` and `periodic_decomposition.m`.
   * _Input_: a folder containing grayscale images in .tif format
   * _Output_: an array containing an alignment order parameter averaged across each image; analysis parameters; input images overlaid with angle vector field (optional)
   * _Parameters_:
@@ -33,12 +33,14 @@ Order parameter values:
   * 0 = Completely random alignment
   * 1 = Perfectly aligned
 
-
 ## FFTAlignment_batch_parameter_search.m
-This routine is based on `FFTAlignment_batch.m` and can be used to search for a parameter set where the difference in alignment between two sample populations is more pronounced. The order parameter is calculated for a range of window and neighbourhood sizes; overlap is set to 50% and the masking method is set to global (the whole image is analysed). The median order parameter calculated for each permutation of window and neighbourhood sizes is compared between the two population, either by looking at their difference (sample 1 - sample 2) or the p-value of a non-parameteric statistical comparison (Mann-Whitney test). It calls the functions `FFTAlignment_parameter_search_main.m`, `FFTAlignment_parameter_search_anglemat`, `FFTAlignment_parameter_search_ordermat`.
+This routine is based on `FFTAlignment_batch.m` and can be used to search for a parameter set where the difference in alignment between two sample populations is more pronounced. The order parameter is calculated for a range of window and neighbourhood sizes; overlap is set to 50% and the masking method is set to global (the whole image is analysed). The median order parameter calculated for each permutation of window and neighbourhood sizes is compared between the two population, either by looking at their difference (sample 1 - sample 2) or the p-value of a non-parameteric statistical comparison (Mann-Whitney test). It calls the functions `FFTAlignment_parameter_search_main.m`, `FFTAlignment_parameter_search_anglemat.m`, `FFTAlignment_parameter_search_ordermat.m`, `periodic_decomposition.m`.
+
+It's possible to access and plot mean order parameter values for a specific window size and increasing neighbourhoods with the script `plot_order_decay.m`. This can be used to evaluate the length scale of the alignment by analysing the relative decay in order parameter between the two samples.
 
 * _Input_: two separate folders containing grayscale images in .tif format for the 2 samples to be compared
 * _Output_: a cell array containing an alignment order parameter averaged across each image for each window and neighbourhood sizes; analysis parameters; heatmaps for order parameter comparison (difference and p-value)
 * _Parameters_:
   * `Minimum window size [px]` = Size of the smallest sub-window to be tested (in pixel)
   * `Window size interval [px]` = Interval between subsequent sub-window sizes to be tested (in pixel)
+  * `Window overlap (fixed parameter) [%]` = Percentage of window overlap. This is a fixed parameter (i.e., will not be modified during the parameter search).
