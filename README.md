@@ -2,11 +2,14 @@
 
 Algorithms to calculate fibre alignment from biological images can be found in this repository. Please refer to the documentation below for further information.
 
-This analysis was produced for [Cetera et al. Nat Commun 2014; 5:1-12](http://www.ncbi.nlm.nih.gov/pubmed/25413675). A methods paper is currently in preparation, link and citation will be added in due course.
+This analysis was produced for [Cetera et al. Nat Commun 2014; 5:1-12](http://www.ncbi.nlm.nih.gov/pubmed/25413675) - see release. A methods paper is currently in preparation, link and citation will be added in due course.
+
+## Usage
+Download the repository on your local machine. For MATLAB implementation, set the Current Folder to the downloaded repo, open the required script and hit Run.
 
 ## FFTAlignment_batch.m
 This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m`, `user_input.m` and `periodic_decomposition.m`.
-  * _Input_: a folder containing grayscale images in .tif format
+  * _Input_: a folder containing grayscale images in .tif format (white signal over black background)
   * _Output_: an array containing an alignment order parameter averaged across each image; analysis parameters; input images overlaid with angle vector field (optional)
   * _Parameters_:
     * `Window size [px]` = Size of the sub-windows in pixel
@@ -38,7 +41,7 @@ This routine is based on `FFTAlignment_batch.m` and can be used to search for a 
 
 It's possible to access and plot mean order parameter values for a specific window size and increasing neighbourhoods with the script `plot_order_decay.m`. This can be used to evaluate the length scale of the alignment by analysing the relative decay in order parameter between the two samples.
 
-* _Input_: two separate folders containing grayscale images in .tif format for the 2 samples to be compared
+* _Input_: two separate folders containing grayscale images in .tif format for the 2 samples to be compared (white signal over black background)
 * _Output_: a cell array containing an alignment order parameter averaged across each image for each window and neighbourhood sizes; analysis parameters; heatmaps for order parameter comparison (difference and p-value)
 * _Parameters_:
   * `Minimum window size [px]` = Size of the smallest sub-window to be tested (in pixel)
