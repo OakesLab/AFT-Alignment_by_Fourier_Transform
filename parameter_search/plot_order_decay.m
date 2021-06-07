@@ -46,7 +46,9 @@ parameters = parameters.parameters_save;
 %% extract order parameter for requested window size %%
 
 winsize = str2double(user_answer{1,1});
-array = parameters.min_winsize_px:parameters.winsize_int_px:length(av_ordermat1)*parameters.min_winsize_px;
+array = parameters.min_winsize_px:...
+    parameters.winsize_int_px:...
+    (length(av_ordermat1)-1)*parameters.winsize_int_px+parameters.min_winsize_px;
 
 cond = winsize == array;
 out1 = av_ordermat1{cond,1};

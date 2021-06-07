@@ -128,7 +128,9 @@ xticks(x_tick);
 xticklabels(x_label);
 xtickangle(45)
 yticks(1:n_windows);
-yticklabels(parameters_save.min_winsize_px:parameters_save.winsize_int_px:n_windows*parameters_save.min_winsize_px);
+yticklabels(parameters_save.min_winsize_px:...
+    parameters_save.winsize_int_px:...
+    (n_windows-1)*parameters_save.winsize_int_px+parameters_save.min_winsize_px);
 
 % save
 im_out = getframe(gcf);
@@ -163,7 +165,9 @@ xticks(x_tick);
 xticklabels(x_label);
 xtickangle(45)
 yticks(1:n_windows);
-yticklabels(parameters_save.min_winsize_px:parameters_save.winsize_int_px:n_windows*parameters_save.min_winsize_px);
+yticklabels(parameters_save.min_winsize_px:...
+    parameters_save.winsize_int_px:...
+    (n_windows-1)*parameters_save.winsize_int_px+parameters_save.min_winsize_px);
 
 % save
 im_out = getframe(gcf);
