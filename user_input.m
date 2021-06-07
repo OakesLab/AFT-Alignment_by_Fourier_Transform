@@ -107,4 +107,7 @@ end
 % save parameters in [output] folder
 save(fullfile([parent_d '/output'], 'parameters.mat'), 'parameters_save');
 
+T = struct2table(parameters_save);
+writetable(T,fullfile([parent_d '/output'], 'parameters.txt'))
+
 end

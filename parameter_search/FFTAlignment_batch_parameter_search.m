@@ -45,6 +45,10 @@ parameters_save.overlap_percentage = str2double(user_answer{3,1});
 save(fullfile([parent_d1 '/output_parameter_search'], 'parameters.mat'), 'parameters_save');
 save(fullfile([parent_d2 '/output_parameter_search'], 'parameters.mat'), 'parameters_save');
 
+T = struct2table(parameters_save);
+writetable(T,fullfile([parent_d1 '/output_parameter_search'], 'parameters.txt'))
+writetable(T,fullfile([parent_d2 '/output_parameter_search'], 'parameters.txt'))
+
 %% perform parameter search on both samples %%
 av_ordermat_output1 = FFTAlignment_parameter_search_main(listing1, parameters_save);
 av_ordermat_output2 = FFTAlignment_parameter_search_main(listing2, parameters_save);
