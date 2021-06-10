@@ -130,27 +130,30 @@ for i = 1:numRows
                 x3 = xave-r*sin(theta);
                 y3 = yave-r*cos(theta);
                 
-                % Interpolate line scans
-                line1 = improfile(log(window_fft),[xave x2],[yave y2],r);
-                line2 = improfile(log(window_fft),[xave x3],[yave y3],r);
-                
-                % Determine which line is the maximum and minimum direction and correct theta accordingly
-                if sum(line1) > sum(line2)
-                    maxline = line1;
-                    minline = line2;
-                    if x2 < xave
-                        theta = theta + pi/2;
+                if ~any(isnan([x2, x3, y2, y3]))
+                    % Interpolate line scans
+                    line1 = improfile(log(window_fft),[xave x2],[yave y2],r);
+                    line2 = improfile(log(window_fft),[xave x3],[yave y3],r);
+                    
+                    % Determine which line is the maximum and minimum direction and correct theta accordingly
+                    if sum(line1) > sum(line2)
+                        maxline = line1;
+                        minline = line2;
+                        if x2 < xave
+                            theta = theta + pi/2;
+                        end
+                    else
+                        maxline = line2;
+                        minline = line1;
+                        if x3 < xave
+                            theta = theta + pi/2;
+                        end
                     end
+                    
+                    anglemat(i,j) = theta;
                 else
-                    maxline = line2;
-                    minline = line1;
-                    if x3 < xave
-                        theta = theta + pi/2;
-                    end
+                    anglemat(i,j) = NaN;
                 end
-                
-                anglemat(i,j) = theta;
-                
                 
             else
                 anglemat(i,j) = NaN;
