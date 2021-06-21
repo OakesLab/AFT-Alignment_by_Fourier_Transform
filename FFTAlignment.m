@@ -227,9 +227,10 @@ for i = 1:numRows
     end
 end
 
-% plot vectorfield
+% plots 
 if parameters.figures == 1
     
+    % vector field
     figure
     imshow(im, [])
     hold on
@@ -241,6 +242,21 @@ if parameters.figures == 1
     imwrite(im_out, fullfile([directory '/output'], ['vectors_' file(1:end-4) '.tif']));
     close
     
+    % angle heat map
+    figure('Position',[200 200 512 512]);
+    imagesc(rad2deg(anglemat));
+    hsv_nan = [[0,0,0];colormap('hsv')];
+    set(gca,'visible','off')
+    caxis([0,180]);
+    colormap(hsv_nan);
+    set(gcf, 'InvertHardCopy', 'off');
+    set(gcf, 'Color', [1 1 1]);
+
+    im_out = getframe(gcf);
+    im_out = im_out.cdata;
+    imwrite(im_out, fullfile([directory '/output'], ['angle_heatmap_' file(1:end-4) '.tif']));
+    close
+
 end
 
 % Calculate the order parameter
