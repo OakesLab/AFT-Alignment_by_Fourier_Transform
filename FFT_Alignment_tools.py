@@ -11,6 +11,7 @@ def image_norm(im):
     return im_norm
 
 def periodic_decomposition(im):
+    im = im.astype('float32')
     # find the number of rows and cols
     N_rows, N_cols = im.shape
     # create an zero matrix the size of the image
@@ -61,6 +62,8 @@ def least_moment(image, xcoords=[], ycoords=[]):
 
     # angle of axis
     theta = 0.5 * np.arctan2((2 * mu11),(mu20 - mu02))
+    if theta < 0:
+        theta += np.pi
     # multiply by -1 to correct for origin being in top left corner instead of bottom right
     theta = -1 * theta
     # find eigenvectors
@@ -68,9 +71,6 @@ def least_moment(image, xcoords=[], ycoords=[]):
     lambda2 = (0.5 * (mu20 + mu02)) - (0.5 * np.sqrt(4 * mu11**2 + (mu20 - mu02)**2))
     # calculate the eccentricity (e.g. how oblong it is)
     eccentricity = np.sqrt(1 - lambda2/lambda1)
-    
-    # correct for real space
-    theta = theta + np.pi/2
 
     return theta, eccentricity
 
@@ -119,6 +119,9 @@ def image_local_order(im, window_size = 33, overlap = 0.5):
             im_window_fft_norm = image_norm(im_window_fft) * im_mask
             # calculate the angle and eccentricity of orientation based on the FFT moments
             theta, eccentricity = least_moment(im_window_fft_norm, xcoords, ycoords)
+
+            # correct for real space
+            theta = theta + np.pi/2
             # add the values to each list
             im_theta.append(theta)
             im_ecc.append(eccentricity)
