@@ -135,7 +135,7 @@ def image_local_order(im, window_size = 33, overlap = 0.5):
     y = np.array(y)
     u = np.array(u)
     v = np.array(v)
-    im_theta = np.array(im_theta)
-    im_ecc = np.array(im_ecc)
+    im_theta = np.reshape(im_theta,(len(rpos),len(cpos)))
+    im_ecc = np.reshape(im_ecc,(len(rpos),len(cpos)))
 
     return x, y, u, v, im_theta, im_ecc
