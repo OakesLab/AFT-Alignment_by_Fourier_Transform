@@ -86,7 +86,7 @@ def image_local_order(im, window_size = 33, overlap = 0.5):
     cpos = np.arange(radius,N_cols-radius,int(window_size * overlap))
 
     # make a structuring element to filter the mask
-    bpass_filter = disk(radius)
+    bpass_filter = disk(radius * .5)
 
     # make mask
     im_mask = np.zeros((window_size, window_size))
