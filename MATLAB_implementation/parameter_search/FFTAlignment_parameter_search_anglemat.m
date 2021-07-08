@@ -37,7 +37,7 @@ mask_method = 0;	% global = 0; local = 1;
 im2 = zeros(size(im));
 
 % mask to apply during moments calculation
-r = 0.75 * winrad; % Kind of arbitrary choice. Just needs to go to zero near edges
+r = 0.5 * winrad; 
 
 % global masking method
 if mask_method == 0 % global
