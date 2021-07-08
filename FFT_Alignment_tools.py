@@ -104,7 +104,7 @@ def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, inten
 
     # check if there is an image mask
     if im_mask is None:
-        im_mask = np.ones_like(im)
+        im_mask = np.ones_like(im).astype('bool')
     else:
         # make sure the input mask is a boolean
         im_mask = im_mask.astype('bool')
@@ -191,6 +191,12 @@ def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, inten
         plt.figure()
         plt.imshow(im_ecc, vmin=0, vmax=1)
         plt.colorbar()
+        plt.show()
+
+    if plot_overlay:
+        plt.figure()
+        plt.imshow(im, cmap='Greys_r')
+        plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0)
         plt.show()
 
 
