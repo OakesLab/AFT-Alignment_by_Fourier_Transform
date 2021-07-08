@@ -1,6 +1,6 @@
-function av_ordermat = FFTAlignment_parameter_search_order(anglemat,st)
+function av_ordermat = FFTAlignment_ordermat(anglemat, parameters)
 
-% calculate the order parameter
+st = parameters.st;
 ordermat = NaN(size(anglemat));
 for i = st+1:size(anglemat,1)-st
     for j = st+1:size(anglemat,2)-st
@@ -13,7 +13,6 @@ for i = st+1:size(anglemat,1)-st
         clear temp temp2 comp
     end
 end
-
 av_ordermat = nanmedian(ordermat(:));
 
 end
