@@ -113,59 +113,22 @@ for i = 1:numRows
                 mu11 = M11/M00-xave*yave;
                 
                 % Angle of axis of the least second moment
-                theta = 0.5*atan(2*mu11/(mu20-mu02));
+                theta = 0.5*atan2(2*mu11,(mu20-mu02));
                 
                 % Convert angle to proper orientation for my frame of reference
-                if theta > 0 && theta < pi/4
-                    theta = pi/2-theta;
+                if theta > 0 && theta < pi/2
+                    theta = pi-theta;
                 end
-                if theta > -pi/4 && theta < 0
+                if theta > -pi/2 && theta < 0
                     theta = -1*theta;
                 end
                 
-                % Find points to draw line scans
-                x2 = xave+r*cos(theta);
-                y2 = yave-r*sin(theta);
-                
-                x3 = xave-r*sin(theta);
-                y3 = yave-r*cos(theta);
-                
-                if ~any(isnan([x2, x3, y2, y3]))
-                    % Interpolate line scans
-                    line1 = improfile(log(window_fft),[xave x2],[yave y2],r);
-                    line2 = improfile(log(window_fft),[xave x3],[yave y3],r);
-                    
-                    % Determine which line is the maximum and minimum direction and correct theta accordingly
-                    if sum(line1) > sum(line2)
-                        maxline = line1;
-                        minline = line2;
-                        if x2 < xave
-                            theta = theta + pi/2;
-                        end
-                    else
-                        maxline = line2;
-                        minline = line1;
-                        if x3 < xave
-                            theta = theta + pi/2;
-                        end
-                    end
-                    
-                    anglemat(i,j) = theta;
-                else
-                    anglemat(i,j) = NaN;
-                end
+                anglemat(i,j) = theta;
                 
             else
                 anglemat(i,j) = NaN;
             end
             
-            pr(k) = grid_row(i);
-            pc(k) = grid_col(j);
-            ur(k) = -1*floor(winrad/2)*cos(theta);
-            vc(k) = -1*floor(winrad/2)*sin(theta);
-            ur2(k) = floor(winrad/2)*cos(theta);
-            vc2(k) = floor(winrad/2)*sin(theta);
-            ang(k,1) = theta;
         end
         
     end
