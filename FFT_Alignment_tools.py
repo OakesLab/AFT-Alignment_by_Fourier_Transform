@@ -222,3 +222,78 @@ def calculate_order_parameter(im_theta, neighborhood_radius):
     im_orderparameter = np.nanmedian(order_list)
 
     return im_orderparameter
+
+def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_figure=True):
+    # read in an image to get the image shape
+    im = io.imread(image_list[0])
+    
+    # set max win size - this is arbitary but would give you 3 windows with an overlap of 50%
+    max_win_size = (np.max(im.shape) -1 ) // 3 # -1 accounts for rare case where image is perfectly divisble by 3 into an even number
+    
+    # make a list of window sizes to search through
+    win_size_list = np.arange(min_win_size, max_win_size, win_size_interval)
+    
+    # make them odd if they aren't already
+    win_size_list[win_size_list % 2 == 0] += 1
+
+    # make empty lists to hold the data
+    win_size_result, image_result, order_parameter_result, neighborhood_result = [], [], [], []
+    
+    # for loops to go through each image, window size and neighborhood radius
+    for image in image_list:
+        # Read in the image
+        im = io.imread(image).astype('float32')
+        
+        # loop through the different window sizes
+        for win_size in win_size_list:
+            # calculate the theta matric       
+            _,_,_,_,im_theta,_ = image_local_order(im, window_size = win_size, overlap = overlap, plot_angles=False, plot_eccentricity=False)
+            
+            # get the number of windows
+            n_windows = np.max(im_theta.shape)
+            
+            # make a list of neighborhood radii to measure
+            neighborhood_list = np.arange(1, (n_windows - 1) // 2)
+            
+            # loop through all neighborhood radiui
+            for neighborhood in neighborhood_list:
+                # calculate the order parameter
+                im_orderparameter = calculate_order_parameter(im_theta, neighborhood_radius=neighborhood)
+                
+                # add the parameters to the relevant lists
+                win_size_result.append(win_size)
+                image_result.append(image)
+                order_parameter_result.append(im_orderparameter)
+                neighborhood_result.append(neighborhood)
+
+    # make a dictionary of our lists
+    data_dict = {
+        'window_size' : win_size_result,
+        'neighborhood_radius' : neighborhood_result,
+        'order_parameter' : order_parameter_result,
+        'image' : image_result
+    }
+    
+    # convert the dictionary to a dataframe
+    Order_dataframe = pd.DataFrame(data_dict)  
+    
+    # Find the number of different windows and neighborhoods tested 
+    N_windows = len(win_size_list)
+    neighborhood_list = np.arange(1,np.max(Order_dataframe['neighborhood_radius'])+1)
+    N_neighborhood = len(neighborhood_list)
+
+    # make a matrix of window size (rows) and neighborhood size (cols)
+    window_neighborhood = np.zeros((N_windows, N_neighborhood))
+
+    # populate the matrix with the median of the order parameter of all the images
+    for i,win_size in enumerate(win_size_list):
+        for j, neighborhood in enumerate(neighborhood_list):
+            temp = Order_dataframe[(Order_dataframe.window_size==win_size) & (Order_dataframe.neighborhood_radius==neighborhood)]
+            window_neighborhood[i,j] = np.median(temp.order_parameter)
+    
+    if plot_figure:
+        plt.figure()
+        plt.imshow(window_neighborhood)
+        plt.show()
+
+    return Order_dataframe, window_neighborhood
