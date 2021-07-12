@@ -4,7 +4,7 @@
 Download the repository on your local machine. In MATLAB, set the Current Folder to the downloaded repo, open the required script and hit Run.
 
 ## `FFTAlignment_batch.m`
-This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m`, `user_input.m` and `periodic_decomposition.m`.
+This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m`, `user_input.m`, `periodic_decomposition.m`, `FFTAlignment_anglemat.m`, and `FFTAlignment_ordermat.m`.
   * _Input_: a folder containing grayscale images in .tif format (white signal over black background)
 
   ![](img/FFT_batch_input.png)
