@@ -5,6 +5,7 @@ import cv2                                                     # for filtering v
 from skimage.morphology import disk        # morphology operations
 import numpy.matlib as matlib
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 def image_norm(im):
@@ -76,7 +77,7 @@ def least_moment(image, xcoords=[], ycoords=[]):
 
     return theta, eccentricity
 
-def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, plot_angles=True, plot_eccentricity=True):
+def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, plot_overlay=True, plot_angles=True, plot_eccentricity=True):
     # get the image shape
     N_rows, N_cols = im.shape
 
@@ -196,7 +197,7 @@ def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, inten
     if plot_overlay:
         plt.figure()
         plt.imshow(im, cmap='Greys_r')
-        plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0)
+        plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, width=0.01)
         plt.show()
 
 
@@ -247,7 +248,7 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
         # loop through the different window sizes
         for win_size in win_size_list:
             # calculate the theta matric       
-            _,_,_,_,im_theta,_ = image_local_order(im, window_size = win_size, overlap = overlap, plot_angles=False, plot_eccentricity=False)
+            _,_,_,_,im_theta,_ = image_local_order(im, window_size = win_size, overlap = overlap, plot_overlay = False, plot_angles=False, plot_eccentricity=False)
             
             # get the number of windows
             n_windows = np.max(im_theta.shape)
