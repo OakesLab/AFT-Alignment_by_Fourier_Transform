@@ -77,9 +77,15 @@ def least_moment(image, xcoords=[], ycoords=[]):
 
     return theta, eccentricity
 
-def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, plot_overlay=True, plot_angles=True, plot_eccentricity=True):
+def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, 
+                        plot_overlay=False, plot_angles=False, plot_eccentricity=False, save_figures=False, save_path = ''):
+    
+    # check to see if it's a stack of images or a single image
+    if len(imstack.shape) == 2:
+        imstack = np.expand_dims(imstack, axis=0)
+
     # get the image shape
-    N_rows, N_cols = im.shape
+    N_images, N_rows, N_cols = imstack.shape
 
     # make window size off if it isn't already
     if window_size % 2 == 0:
@@ -105,7 +111,7 @@ def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, inten
 
     # check if there is an image mask
     if im_mask is None:
-        im_mask = np.ones_like(im).astype('bool')
+        im_mask = np.ones_like(imstack).astype('bool')
     else:
         # make sure the input mask is a boolean
         im_mask = im_mask.astype('bool')
@@ -113,96 +119,115 @@ def image_local_order(im, window_size = 33, overlap = 0.5, im_mask = None, inten
     # make x and y coordinate matrices
     xcoords, ycoords = np.meshgrid(np.arange(0,window_size) , np.arange(0,window_size))
 
-    # make empty list variables
-    im_theta, im_ecc = [], []
-    x, y, u, v = [], [], [], []
-    
     # length of orientation vector
     arrow_length = radius / 2
-    
-    # loop through each position and measure the local orientation
-    for r in rpos:
-        for c in cpos:
 
-            # check to see if point is within image mask
-            if im_mask[r,c] == True:
-                # define the window to analyze
-                im_window = im[r-radius:r+radius+1,c-radius:c+radius+1]
+    # make lists to hold for multiple frames
+    theta_stack, ecc_stack, u_stack, v_stack = [], [], [], []
 
-                # check that it's above the intensity threshold
-                if np.mean(im_window) > intensity_thresh:
-                    # separate out the periodic and smooth components
-                    im_window_periodic, im_window_smooth = periodic_decomposition(im_window)
-                    # take the FFT of the periodic component
-                    im_window_fft = fftshift(fft2(im_window_periodic))
-                    # find the image norm and mulitply by the mask
-                    im_window_fft_norm = image_norm(im_window_fft) * window_mask
-                    # calculate the angle and eccentricity of orientation based on the FFT moments
-                    theta, eccentricity = least_moment(im_window_fft_norm, xcoords, ycoords)
+    for frame,im in enumerate(imstack):
 
-                    # correct for real space
-                    theta = theta + np.pi/2
+        # make empty list variables
+        im_theta, im_ecc = [], []
+        x, y, u, v = [], [], [], []
+        
+        
+        # loop through each position and measure the local orientation
+        for r in rpos:
+            for c in cpos:
+                # store the row and column positions
+                x.append(c)
+                y.append(r)
 
-                    # map everything back to between -pi/2 and pi/2
-                    if theta > np.pi/2:
-                        theta -= np.pi
+                # check to see if point is within image mask
+                if im_mask[frame,r,c] == True:
+                    # define the window to analyze
+                    im_window = im[r-radius:r+radius+1,c-radius:c+radius+1]
 
-                    # filter based on eccentricity
-                    if eccentricity > eccentricitiy_thresh:
-                        eccentricity = np.nan
-                        theta = np.nan
+                    # check that it's above the intensity threshold
+                    if np.mean(im_window) > intensity_thresh:
+                        # separate out the periodic and smooth components
+                        im_window_periodic, im_window_smooth = periodic_decomposition(im_window)
+                        # take the FFT of the periodic component
+                        im_window_fft = fftshift(fft2(im_window_periodic))
+                        # find the image norm and mulitply by the mask
+                        im_window_fft_norm = image_norm(im_window_fft) * window_mask
+                        # calculate the angle and eccentricity of orientation based on the FFT moments
+                        theta, eccentricity = least_moment(im_window_fft_norm, xcoords, ycoords)
 
-                    # add the values to each list
-                    im_theta.append(theta)
-                    im_ecc.append(eccentricity)
-                    x.append(c)
-                    y.append(r)
-                    u.append(np.cos(theta) * arrow_length)
-                    v.append(np.sin(theta) * arrow_length)
+                        # correct for real space
+                        theta = theta + np.pi/2
+
+                        # map everything back to between -pi/2 and pi/2
+                        if theta > np.pi/2:
+                            theta -= np.pi
+
+                        # filter based on eccentricity
+                        if eccentricity > eccentricitiy_thresh:
+                            eccentricity = np.nan
+                            theta = np.nan
+
+                        # add the values to each list
+                        im_theta.append(theta)
+                        im_ecc.append(eccentricity)
+                        u.append(np.cos(theta) * arrow_length)
+                        v.append(np.sin(theta) * arrow_length)
+                    else:
+                        im_theta.append(np.nan)
+                        im_ecc.append(np.nan)
+                        u.append(np.nan)
+                        v.append(np.nan)
                 else:
                     im_theta.append(np.nan)
                     im_ecc.append(np.nan)
-                    x.append(c)
-                    y.append(r)
                     u.append(np.nan)
                     v.append(np.nan)
-            else:
-                im_theta.append(np.nan)
-                im_ecc.append(np.nan)
-                x.append(c)
-                y.append(r)
-                u.append(np.nan)
-                v.append(np.nan)
 
-    # turn all the lists into arrays for simple indexing
-    x = np.array(x)
-    y = np.array(y)
-    u = np.array(u)
-    v = np.array(v)
-    im_theta = np.reshape(im_theta,(len(rpos),len(cpos)))
-    im_ecc = np.reshape(im_ecc,(len(rpos),len(cpos)))
+        # turn all the lists into arrays for simple indexing
+        x = np.array(x)
+        y = np.array(y)
+        u = np.array(u)
+        v = np.array(v)
+        im_theta = np.reshape(im_theta,(len(rpos),len(cpos)))
+        im_ecc = np.reshape(im_ecc,(len(rpos),len(cpos)))
 
-    if plot_angles:
-        plt.figure()
-        plt.imshow(im_theta, vmin=-np.pi/2, vmax=np.pi/2, cmap='hsv')
-        plt.colorbar()
-        plt.show()
+        if plot_angles:
+            plt.figure()
+            plt.imshow(im_theta, vmin=-np.pi/2, vmax=np.pi/2, cmap='hsv')
+            plt.colorbar()
+            plt.show()
+            if save_figures:
+                plt.savefig(save_path + 'angle_map_frame_%03d.tif' % (frame), format='png', dpi=300)
 
-    if plot_eccentricity:
-        plt.figure()
-        plt.imshow(im_ecc, vmin=0, vmax=1)
-        plt.colorbar()
-        plt.show()
+        if plot_eccentricity:
+            plt.figure()
+            plt.imshow(im_ecc, vmin=0, vmax=1)
+            plt.colorbar()
+            plt.show()
+            if save_figures:
+                plt.savefig(save_path + 'eccentrcitiy_map_frame_%03d.tif' % (frame), format='png', dpi=300)
 
-    if plot_overlay:
-        plt.figure()
-        plt.imshow(im, cmap='Greys_r')
-        plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, width=0.01)
-        plt.show()
+        if plot_overlay:
+            plt.figure()
+            plt.imshow(im, cmap='Greys_r')
+            plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, width=0.01)
+            plt.show()
+            if save_figures:
+                plt.savefig(save_path + 'overlay_frame_%03d.tif' % (frame), format='png', dpi=300)
 
+        theta_stack.append(im_theta)
+        ecc_stack.append(im_ecc)
+        u_stack.append(u)
+        v_stack.append(v)
 
+    # reduce dimensions if only one frame
+    if N_images == 1:
+        u_stack = u_stack[0]
+        v_stack = v_stack[0]
+        theta_stack = theta_stack[0]
+        ecc_stack = ecc_stack[0]
 
-    return x, y, u, v, im_theta, im_ecc
+    return x, y, u_stack, v_stack, theta_stack, ecc_stack
 
 
 def calculate_order_parameter(im_theta, neighborhood_radius):
