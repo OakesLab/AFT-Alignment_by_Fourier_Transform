@@ -210,7 +210,7 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
         if plot_overlay:
             plt.figure()
             plt.imshow(im, cmap='Greys_r')
-            plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, width=0.01)
+            plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, headlength=0, width=0.01)
             plt.show()
             if save_figures:
                 plt.savefig(save_path + 'overlay_frame_%03d.tif' % (frame), format='png', dpi=300)
