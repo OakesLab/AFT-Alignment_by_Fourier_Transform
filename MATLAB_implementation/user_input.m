@@ -3,19 +3,19 @@ function [parameters, listing_masks] = user_input(parent_d)
 % user input dialog
 prompt = {'Window size [px]', ...
     'Window overlap [%]',...
-    'Neighbourhood size [vectors]'};
+    'Neighbourhood radius [vectors]'};
 prompt_title = 'Parameters';
 dims = [1 50];
-definput = {'250','50','5'};
+definput = {'250','50','2'};
 user_answer = inputdlg(prompt, prompt_title, dims, definput);
 
 parameters_save.winsize_px = str2double(user_answer{1,1});
 parameters_save.overlap_percentage = str2double(user_answer{2,1});
-parameters_save.neighbourhood_vectors = str2double(user_answer{3,1});
+parameters_save.neighbourhood_radius = str2double(user_answer{3,1});
 
 parameters.winsize = parameters_save.winsize_px;
 parameters.overlap = 1 - parameters_save.overlap_percentage/100;
-parameters.st = round((parameters_save.neighbourhood_vectors - 1)/2);
+parameters.st = parameters_save.neighbourhood_radius;
 
 % user answers on saving and filtering
 answer_output = questdlg('Would you like to save output images?', ...
