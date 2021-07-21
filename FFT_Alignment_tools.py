@@ -193,8 +193,9 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
 
         if plot_angles:
             plt.figure()
-            plt.imshow(im_theta, vmin=-np.pi/2, vmax=np.pi/2, cmap='hsv')
+            plt.imshow(im_theta * 180 / np.pi, vmin=-90, vmax=90, cmap='hsv')
             plt.colorbar()
+            plt.title('Orientation')
             plt.show()
             if save_figures:
                 plt.savefig(save_path + 'angle_map_frame_%03d.tif' % (frame), format='png', dpi=300)
@@ -203,6 +204,7 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
             plt.figure()
             plt.imshow(im_ecc, vmin=0, vmax=1)
             plt.colorbar()
+            plt.title('Eccentricity')
             plt.show()
             if save_figures:
                 plt.savefig(save_path + 'eccentrcitiy_map_frame_%03d.tif' % (frame), format='png', dpi=300)
@@ -210,7 +212,8 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
         if plot_overlay:
             plt.figure()
             plt.imshow(im, cmap='Greys_r')
-            plt.quiver(x,y,u,v, color='yellow', pivot='mid', headaxislength=0, headlength=0, width=0.01)
+            plt.quiver(x,y,u,v, color='yellow', pivot='mid', scale_units='xy', scale=overlap/2, headaxislength=0, headlength=0, width=0.005)
+            plt.title('Overlay')
             plt.show()
             if save_figures:
                 plt.savefig(save_path + 'overlay_frame_%03d.tif' % (frame), format='png', dpi=300)
@@ -230,24 +233,40 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
     return x, y, u_stack, v_stack, theta_stack, ecc_stack
 
 
-def calculate_order_parameter(im_theta, neighborhood_radius):
+def calculate_order_parameter(im_theta_stack, neighborhood_radius):
 
-    order_list = []
+    # check if it's a list
+    if type(im_theta_stack) == np.ndarray:
+        im_theta_stack = [im_theta_stack]
 
-    rpos = np.arange(neighborhood_radius,im_theta.shape[0]-neighborhood_radius)
-    cpos = np.arange(neighborhood_radius,im_theta.shape[1]-neighborhood_radius)
+    # get the number of images
+    N_images = len(im_theta_stack)
 
-    for r in rpos:
-        for c in cpos:
-            search_window = im_theta[r-neighborhood_radius:r+neighborhood_radius+1,c-neighborhood_radius:c+neighborhood_radius+1]
-            vector_array = np.ones_like(search_window) * im_theta[r,c]
-            order_array = np.cos(search_window - vector_array) ** 2 - 0.5
-            order_array = np.delete(order_array, (2*neighborhood_radius + 1)**2 // 2)
-            order_list.append(2 * np.nanmean(order_array))
+    # empty list to hold order parameter values for each image
+    im_orderparameter_stack = []
 
-    im_orderparameter = np.nanmedian(order_list)
+    for im_theta in im_theta_stack:
+        order_list = []
 
-    return im_orderparameter
+        rpos = np.arange(neighborhood_radius,im_theta.shape[0]-neighborhood_radius)
+        cpos = np.arange(neighborhood_radius,im_theta.shape[1]-neighborhood_radius)
+
+        for r in rpos:
+            for c in cpos:
+                search_window = im_theta[r-neighborhood_radius:r+neighborhood_radius+1,c-neighborhood_radius:c+neighborhood_radius+1]
+                vector_array = np.ones_like(search_window) * im_theta[r,c]
+                order_array = np.cos(search_window - vector_array) ** 2 - 0.5
+                order_array = np.delete(order_array, (2*neighborhood_radius + 1)**2 // 2)
+                if not np.isnan(order_array.all()):
+                    order_list.append(2 * np.nanmean(order_array))
+
+        im_orderparameter_stack.append(np.nanmedian(order_list))
+
+    # Reduce dimensions if only one image
+    if N_images == 1:
+        im_orderparameter_stack = im_orderparameter_stack[0]
+
+    return im_orderparameter_stack
 
 def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_figure=True):
     # read in an image to get the image shape
@@ -315,11 +334,20 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
     for i,win_size in enumerate(win_size_list):
         for j, neighborhood in enumerate(neighborhood_list):
             temp = Order_dataframe[(Order_dataframe.window_size==win_size) & (Order_dataframe.neighborhood_radius==neighborhood)]
-            window_neighborhood[i,j] = np.median(temp.order_parameter)
+            if len(temp) > 0:
+                window_neighborhood[i,j] = np.median(temp.order_parameter)
     
     if plot_figure:
+        # get labels for the plots
+        win_size_labels = np.unique(Order_dataframe['window_size'])
+        neighborhood_labels = np.unique(Order_dataframe['neighborhood_radius'])
+
         plt.figure()
         plt.imshow(window_neighborhood)
+        plt.yticks(np.arange(0,len(win_size_labels)),labels=win_size_labels)
+        plt.ylabel('Window Size (px)')
+        plt.xticks(np.arange(0,len(neighborhood_labels)),labels=neighborhood_labels, rotation='vertical')
+        plr.xlabel('Neighbourhood Radius (px)')
         plt.show()
 
     return Order_dataframe, window_neighborhood
