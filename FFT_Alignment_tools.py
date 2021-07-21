@@ -348,7 +348,7 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
         plt.yticks(np.arange(0,len(win_size_labels)),labels=win_size_labels)
         plt.ylabel('Window Size (px)')
         plt.xticks(np.arange(0,len(neighborhood_labels),2),labels=neighborhood_labels[::2], rotation='vertical')
-        plr.xlabel('Neighbourhood Radius (px)')
+        plt.xlabel('Neighbourhood Radius (px)')
         plt.show()
 
     return Order_dataframe, window_neighborhood
