@@ -143,7 +143,9 @@ close
 figure
 h1 = imagesc(p_median);
 title('p-value (Mann-Whitney)');
-colormap('jet');
+c_spring = colormap('spring');
+c_spring = flipud(c_spring);
+colormap(c_spring)
 colorbar();
 
 % NaNs as black
