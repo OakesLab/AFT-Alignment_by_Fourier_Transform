@@ -328,7 +328,8 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
     N_neighborhood = len(neighborhood_list)
 
     # make a matrix of window size (rows) and neighborhood size (cols)
-    window_neighborhood = np.zeros((N_windows, N_neighborhood))
+    window_neighborhood = np.empty((N_windows, N_neighborhood))
+    window_neighborhood[:] = np.nan
 
     # populate the matrix with the median of the order parameter of all the images
     for i,win_size in enumerate(win_size_list):
@@ -346,7 +347,7 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
         plt.imshow(window_neighborhood)
         plt.yticks(np.arange(0,len(win_size_labels)),labels=win_size_labels)
         plt.ylabel('Window Size (px)')
-        plt.xticks(np.arange(0,len(neighborhood_labels)),labels=neighborhood_labels, rotation='vertical')
+        plt.xticks(np.arange(0,len(neighborhood_labels),2),labels=neighborhood_labels[::2], rotation='vertical')
         plr.xlabel('Neighbourhood Radius (px)')
         plt.show()
 
