@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Code and documentation can be found at
-% https://github.com/OakesLab/FFT_Alignment
+% https://github.com/OakesLab/AFT-Alignment_by_Fourier_Transform
 %
 % This routine uses a vector field of alignment directions using small
 % sub-windows in the real space image to calculate an alignment order
@@ -28,7 +28,7 @@
 % http://www.ncbi.nlm.nih.gov/pubmed/25413675
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function anglemat = FFTAlignment_parameter_search_anglemat(im, winsize, winrad, winspace)
+function anglemat = AFT_parameter_search_anglemat(im, winsize, winrad, winspace)
 
 % set further parameters
 checkpoint = 0; % threshhold sum in each window to do the calculation

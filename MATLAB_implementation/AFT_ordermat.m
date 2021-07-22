@@ -1,4 +1,4 @@
-function av_ordermat = FFTAlignment_ordermat(anglemat, parameters)
+function av_ordermat = AFT_ordermat(anglemat, parameters)
 
 % parameters and initialisation
 st = parameters.st;

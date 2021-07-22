@@ -38,7 +38,7 @@ for file_list = 1:n_files
     end
    
     % call function
-    av_ordermat(file_list,1) = FFTAlignment(file, directory, parameters);
+    av_ordermat(file_list,1) = AFT_function(file, directory, parameters);
     
 end
 

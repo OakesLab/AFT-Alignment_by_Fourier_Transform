@@ -1,10 +1,10 @@
-# FFT Alignment (MATLAB)
+# AFT - Alignment by Fourier Transform (MATLAB)
 
 ## Usage
 Download the repository on your local machine. In MATLAB, set the Current Folder to the downloaded repo, open the required script and hit Run.
 
-## `FFTAlignment_batch.m`
-This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `FFTAlignment.m`, `user_input.m`, `periodic_decomposition.m`, `FFTAlignment_anglemat.m`, and `FFTAlignment_ordermat.m`.
+## `AFT_batch.m`
+This routine uses a vector field of alignment directions using small sub-windows in the real space image to calculate an alignment order parameter. It calls the functions `AFT_function.m`, `user_input.m`, `periodic_decomposition.m`, `AFT_anglemat.m`, and `AFT_ordermat.m`.
   * _Input_: a folder containing grayscale images in .tif format (white signal over black background)
 
   ![](img/FFT_batch_input.png)
@@ -58,8 +58,8 @@ Order parameter values:
   * 0 = Completely random alignment
   * 1 = Perfect alignment
 
-## `FFTAlignment_batch_parameter_search.m`
-This routine is based on `FFTAlignment_batch.m` and can be used to search for a parameter set where the difference in alignment between two sample populations is more pronounced. The order parameter is calculated for a range of window and neighbourhood sizes; the overlap is set to a fixed value by the user and the masking method is set to global (the whole image is analysed). The median order parameter calculated for each permutation of window and neighbourhood sizes is compared between the two population, either by looking at their difference (sample 1 - sample 2) or the p-value of a non-parameteric statistical comparison (Mann-Whitney test). It calls the functions `FFTAlignment_parameter_search_main.m`, `FFTAlignment_parameter_search_anglemat.m`, `FFTAlignment_parameter_search_ordermat.m`, `periodic_decomposition.m`.
+## `AFT_batch_parameter_search.m`
+This routine is based on `AFT_batch.m` and can be used to search for a parameter set where the difference in alignment between two sample populations is more pronounced. The order parameter is calculated for a range of window and neighbourhood sizes; the overlap is set to a fixed value by the user and the masking method is set to global (the whole image is analysed). The median order parameter calculated for each permutation of window and neighbourhood sizes is compared between the two population, either by looking at their difference (sample 1 - sample 2) or the p-value of a non-parameteric statistical comparison (Mann-Whitney test). It calls the functions `AFT_parameter_search_main.m`, `AFT_parameter_search_anglemat.m`, `AFT_parameter_search_ordermat.m`, `periodic_decomposition.m`.
 
 * _Input_: two separate folders containing grayscale images in .tif format for the 2 samples to be compared (white signal over black background)
 
@@ -84,9 +84,9 @@ This routine is based on `FFTAlignment_batch.m` and can be used to search for a 
   * `Window overlap (fixed parameter) [%]` = Percentage of window overlap. This is a fixed parameter (i.e., will not be modified during the parameter search)
 
 ### `plot_order_decay.m`
-It is possible to access and plot mean order parameter values for a specific window size and increasing neighbourhoods with the script `plot_order_decay.m`, after running `FFTAlignment_batch_parameter_search.m`. This can be used to evaluate the length scale of the alignment by analysing the relative decay in order parameter between the two samples for a specific window size. If multiple window sizes are to be explored, the code can be run multiple times with varying parameters.
+It is possible to access and plot mean order parameter values for a specific window size and increasing neighbourhoods with the script `plot_order_decay.m`, after running `AFT_batch_parameter_search.m`. This can be used to evaluate the length scale of the alignment by analysing the relative decay in order parameter between the two samples for a specific window size. If multiple window sizes are to be explored, the code can be run multiple times with varying parameters.
 
-* _Input_: same input as `FFTAlignment_batch_parameter_search.m`: the same two separate folders containing grayscale images in .tif format for the 2 samples to be compared (white signal over black background)
+* _Input_: same input as `AFT_batch_parameter_search.m`: the same two separate folders containing grayscale images in .tif format for the 2 samples to be compared (white signal over black background)
 
   ![](img/FFT_search_input1.png)
   ![](img/FFT_search_input2.png)
@@ -101,4 +101,4 @@ It is possible to access and plot mean order parameter values for a specific win
 
   ![](img/FFT_search_plot_parameters.png)
 
-  * `Window size to display [px]` = Size of the window for which the decay is to be shown. This has to match one of the window sizes for which the analysis in `FFTAlignment_batch_parameter_search.m` was run. To check which window sizes can be used, please refer to the y-axis of the output figures from `FFTAlignment_batch_parameter_search.m` in the `output_parameter_search` folder
+  * `Window size to display [px]` = Size of the window for which the decay is to be shown. This has to match one of the window sizes for which the analysis in `AFT_batch_parameter_search.m` was run. To check which window sizes can be used, please refer to the y-axis of the output figures from `AFT_batch_parameter_search.m` in the `output_parameter_search` folder

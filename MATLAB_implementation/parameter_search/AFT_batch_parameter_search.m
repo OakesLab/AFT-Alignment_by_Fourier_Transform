@@ -50,8 +50,8 @@ writetable(T,fullfile([parent_d1 '/output_parameter_search'], 'parameters.txt'))
 writetable(T,fullfile([parent_d2 '/output_parameter_search'], 'parameters.txt'))
 
 %% perform parameter search on both samples %%
-av_ordermat_output1 = FFTAlignment_parameter_search_main(listing1, parameters_save);
-av_ordermat_output2 = FFTAlignment_parameter_search_main(listing2, parameters_save);
+av_ordermat_output1 = AFT_parameter_search_main(listing1, parameters_save);
+av_ordermat_output2 = AFT_parameter_search_main(listing2, parameters_save);
 
 %% calculate median values and p-values %%
 

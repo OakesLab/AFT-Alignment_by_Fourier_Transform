@@ -1,4 +1,4 @@
-# FFT Alignment
+# AFT - Alignment by Fourier Transform
 
 Algorithms to calculate fibre alignment from biological images can be found in this repository. Please refer to the documentation in each implementation folder for further information.
 
