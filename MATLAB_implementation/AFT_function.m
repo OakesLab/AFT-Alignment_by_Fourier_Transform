@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Code and documentation can be found at
-% https://github.com/OakesLab/FFT_Alignment
+% https://github.com/OakesLab/AFT-Alignment_by_Fourier_Transform
 %
 % This routine uses a vector field of alignment directions using small
 % sub-windows in the real space image to calculate an alignment order
@@ -28,14 +28,14 @@
 % http://www.ncbi.nlm.nih.gov/pubmed/25413675
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function av_ordermat = FFTAlignment(file, directory, parameters)
+function av_ordermat = AFT_function(file, directory, parameters)
 
 % load image
 im = imread(fullfile(directory, file));
 im = im2double(im);
 
 % calculate angle vector field
-[anglemat,pc,pr,vc2,ur2] = FFTAlignment_anglemat(im, parameters);
+[anglemat,pc,pr,vc2,ur2] = AFT_anglemat(im, parameters);
 
 % plots 
 if parameters.figures == 1
@@ -70,6 +70,6 @@ if parameters.figures == 1
 end
 
 % calculate order parameter
-av_ordermat = FFTAlignment_ordermat(anglemat, parameters);
+av_ordermat = AFT_ordermat(anglemat, parameters);
 
 end

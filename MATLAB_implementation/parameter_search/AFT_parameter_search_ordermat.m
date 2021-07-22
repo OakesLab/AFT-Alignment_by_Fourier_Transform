@@ -1,4 +1,4 @@
-function av_ordermat = FFTAlignment_parameter_search_ordermat(anglemat,st)
+function av_ordermat = AFT_parameter_search_ordermat(anglemat,st)
 
 % parameters and initialisation
 ordermat = NaN(size(anglemat));

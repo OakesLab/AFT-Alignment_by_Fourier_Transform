@@ -1,4 +1,4 @@
-function [anglemat,pc,pr,vc2,ur2] = FFTAlignment_anglemat(im, parameters)
+function [anglemat,pc,pr,vc2,ur2] = AFT_anglemat(im, parameters)
 
 % for masking images to only analyze part of it
 if parameters.mask_method == 0 % global
