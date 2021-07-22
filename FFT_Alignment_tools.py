@@ -6,6 +6,7 @@ from skimage.morphology import disk        # morphology operations
 import numpy.matlib as matlib
 import matplotlib.pyplot as plt
 import pandas as pd
+from scipy.stats import mannwhitneyu
 
 
 def image_norm(im):
@@ -257,8 +258,9 @@ def calculate_order_parameter(im_theta_stack, neighborhood_radius):
                 vector_array = np.ones_like(search_window) * im_theta[r,c]
                 order_array = np.cos(search_window - vector_array) ** 2 - 0.5
                 order_array = np.delete(order_array, (2*neighborhood_radius + 1)**2 // 2)
-                if not np.isnan(order_array.all()):
-                    order_list.append(2 * np.nanmean(order_array))
+                if not np.isnan(order_array).all() == True:
+                    if order_array.size > 0:
+                        order_list.append(2 * np.nanmean(order_array))
 
         im_orderparameter_stack.append(np.nanmedian(order_list))
 
@@ -352,3 +354,56 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
         plt.show()
 
     return Order_dataframe, window_neighborhood
+
+def parameter_comparison(Order_dataframe1, window_neighborhood1, Order_dataframe2, window_neighborhood2, savefig=True):
+    # Find the number of different windows and neighborhoods tested 
+    win_size_list = sorted(np.unique(Order_dataframe1['window_size']))
+    N_windows = len(win_size_list)
+    neighborhood_list = sorted(np.unique(Order_dataframe1['neighborhood_radius']))
+    N_neighborhood = len(neighborhood_list)
+
+    # make a matrix of window size (rows) and neighborhood size (cols)
+    p_median = np.empty((N_windows, N_neighborhood))
+    p_median[:] = np.nan
+
+    # populate the matrix with the median of the order parameter of all the images
+    for i,win_size in enumerate(win_size_list):
+        for j, neighborhood in enumerate(neighborhood_list):
+            # select the values we need
+            temp1 = Order_dataframe1[(Order_dataframe1.window_size==win_size) & (Order_dataframe1.neighborhood_radius==neighborhood)]
+            temp2 = Order_dataframe2[(Order_dataframe2.window_size==win_size) & (Order_dataframe2.neighborhood_radius==neighborhood)]
+            # make sure the list isn't full of nan
+            if (len(temp1) > 0) and (len(temp2) > 0):
+                # calculate the p-value between the two groups
+                _, p_median[i,j] = mannwhitneyu(temp1.order_parameter, temp2.order_parameter)
+
+
+    # difference between order parameters
+    order_diff = window_neighborhood1-window_neighborhood2
+    # plot difference in order parameter
+    plt.figure()
+    plt.imshow(order_diff, cmap='jet')
+    plt.xlabel('Neighborhood (Vectors)')
+    plt.xticks(np.arange(0,len(neighborhood_list),2),labels=neighborhood_list[::2], rotation='vertical')
+    plt.ylabel('Window Size (px)')
+    plt.yticks(np.arange(0,len(win_size_list)),labels=win_size_list)
+    plt.colorbar()
+    plt.title('Order Parameter Difference (1st sample - 2nd sample)')
+    plt.show()
+    if savefig:
+        plt.savefig('parameter_search_difference.png', format='png', dpi=300)
+
+    # plot p-value comparison
+    plt.figure()
+    plt.imshow(p_median, cmap='spring_r')
+    plt.xlabel('Neighborhood (Vectors)')
+    plt.xticks(np.arange(0,len(neighborhood_list),2),labels=neighborhood_list[::2], rotation='vertical')
+    plt.ylabel('Window Size (px)')
+    plt.yticks(np.arange(0,len(win_size_list)),labels=win_size_list)
+    plt.title('P-value comparison')
+    plt.colorbar()
+    plt.show()
+    if savefig:
+        plt.savefig('parameter_search_p_value.png', format='png', dpi=300)
+        
+    return order_diff, p_median, win_size_list, neighborhood_list
