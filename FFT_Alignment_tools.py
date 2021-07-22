@@ -300,7 +300,7 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
             n_windows = np.max(im_theta.shape)
             
             # make a list of neighborhood radii to measure
-            neighborhood_list = np.arange(1, (n_windows - 1) // 2)
+            neighborhood_list = np.arange(1, ((n_windows - 1) // 2) + 1)
             
             # loop through all neighborhood radiui
             for neighborhood in neighborhood_list:
