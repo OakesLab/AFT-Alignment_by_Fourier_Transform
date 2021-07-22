@@ -81,6 +81,12 @@ def least_moment(image, xcoords=[], ycoords=[]):
 def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, 
                         plot_overlay=False, plot_angles=False, plot_eccentricity=False, save_figures=False, save_path = ''):
     
+    # check if an output directory is given
+    if len(save_path) > 0:
+        # if directory doesn't exist, make it
+        if os.path.isdir(save_path) == False:
+            os.mkdir(save_path)
+            
     # check to see if it's a stack of images or a single image
     if len(imstack.shape) == 2:
         imstack = np.expand_dims(imstack, axis=0)
