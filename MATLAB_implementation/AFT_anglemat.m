@@ -92,6 +92,7 @@ for i = 1:numRows
                         stats = regionprops(masklab,'area');
                         stats = [stats.Area];
                         val = find(stats == max(stats));
+                        val = val(1,1);
                         maskthresh = zeros(size(mask));
                         maskthresh(masklab==val) = 1;
                         
