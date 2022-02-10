@@ -53,7 +53,7 @@ if parameters.figures == 1
     close
     
     % angle heat map
-    figure('Position',[200 200 512 512]);
+    figure('Position',[100 100 size(im,2)/3 size(im,1)/3]);
     imagesc(rad2deg(anglemat));
     hsv_nan = [[0,0,0];colormap('hsv')];
     set(gca,'visible','off')
