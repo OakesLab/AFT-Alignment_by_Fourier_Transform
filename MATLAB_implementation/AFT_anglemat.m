@@ -79,7 +79,7 @@ for i = 1:numRows
                 
                 im2(grid_row(i)-winrad:grid_row(i)+winrad,grid_col(j)-winrad:grid_col(j)+winrad) = window_fft;
                 k = k + 1;
-                if sum(window_fft(:)) ~= 0
+                if sum(window_fft(:)) ~= 0 
                     
                     window_fft = sqrt(window_fft.*conj(window_fft));
                     
@@ -135,7 +135,11 @@ for i = 1:numRows
                         theta = -1*theta;
                     end
                     
-                    anglemat(i,j) = theta;
+                    if eccentricity > eccentricity_threshold
+                        anglemat(i,j) = theta;
+                    else
+                        anglemat(i,j) = NaN;
+                    end
  
                 else
                     anglemat(i,j) = NaN;
