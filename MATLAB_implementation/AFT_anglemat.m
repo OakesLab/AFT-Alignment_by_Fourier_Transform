@@ -151,6 +151,11 @@ for i = 1:numRows
                     pc(k) = grid_col(j);
                     ur2(k) = floor(winrad/2)*cos(theta);
                     vc2(k) = floor(winrad/2)*sin(theta);
+                else
+                    pr(k) = NaN;
+                    pc(k) = NaN;
+                    ur2(k) = NaN;
+                    vc2(k) = NaN;
                 end
             end
         end
