@@ -78,7 +78,7 @@ def least_moment(image, xcoords=[], ycoords=[]):
 
     return theta, eccentricity
 
-def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricitiy_thresh = 1, 
+def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, intensity_thresh = 0, eccentricity_thresh = 1, 
                         plot_overlay=False, plot_angles=False, plot_eccentricity=False, save_figures=False, save_path = ''):
     
     # check if an output directory is given
@@ -170,7 +170,7 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
                             theta -= np.pi
 
                         # filter based on eccentricity
-                        if eccentricity > eccentricitiy_thresh:
+                        if eccentricity < eccentricity_thresh:
                             eccentricity = np.nan
                             theta = np.nan
 
