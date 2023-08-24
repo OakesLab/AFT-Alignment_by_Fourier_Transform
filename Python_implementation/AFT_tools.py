@@ -90,6 +90,9 @@ def image_local_order(imstack, window_size = 33, overlap = 0.5, im_mask = None, 
     # check to see if it's a stack of images or a single image
     if len(imstack.shape) == 2:
         imstack = np.expand_dims(imstack, axis=0)
+    if im_mask is not None:
+        if imstack.shape[0] == 1:
+            im_mask = np.expand_dims(im_mask, axis=0)
 
     # get the image shape
     N_images, N_rows, N_cols = imstack.shape
