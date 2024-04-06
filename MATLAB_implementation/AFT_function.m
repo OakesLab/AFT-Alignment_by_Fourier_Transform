@@ -57,7 +57,7 @@ if parameters.figures == 1
     imagesc(rad2deg(anglemat));
     hsv_nan = [[0,0,0];colormap('hsv')];
     set(gca,'visible','off')
-    caxis([0,180]);
+    clim([0,180]);
     colormap(hsv_nan);
     set(gcf, 'InvertHardCopy', 'off');
     set(gcf, 'Color', [1 1 1]);

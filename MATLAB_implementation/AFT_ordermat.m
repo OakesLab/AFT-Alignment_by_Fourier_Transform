@@ -19,13 +19,13 @@ for i = st+1:size(anglemat,1)-st
         comp(idx_centre, idx_centre) = NaN;
         
         % calculate order parameter
-        ordermat(i,j) = 2*(nanmean(comp(:))-.5);
+        ordermat(i,j) = 2*(mean(comp(:),'omitnan')-.5);
         
         clear temp temp2 comp
     end
 end
 
 % calculate median order parameter for image
-av_ordermat = nanmedian(ordermat(:));
+av_ordermat = median(ordermat(:), 'omitnan');
 
 end

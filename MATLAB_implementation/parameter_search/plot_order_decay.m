@@ -54,8 +54,8 @@ cond = winsize == array;
 out1 = av_ordermat1{cond,1};
 out2 = av_ordermat2{cond,1};
 
-decay1 = nanmean(out1);
-decay2 = nanmean(out2);
+decay1 = mean(out1, 'omitnan');
+decay2 = mean(out2, 'omitnan');
 
 %% plot and save %%
 figure
