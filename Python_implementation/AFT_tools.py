@@ -7,6 +7,7 @@ import numpy.matlib as matlib
 import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import mannwhitneyu
+import os
 
 
 def image_norm(im):
