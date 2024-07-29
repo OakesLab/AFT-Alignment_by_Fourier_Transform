@@ -281,6 +281,9 @@ def calculate_order_parameter(im_theta_stack, neighborhood_radius):
     return im_orderparameter_stack
 
 def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_figure=True):
+    # turn off warning for division by NaN
+    np.seterr(divide='ignore', invalid='ignore')
+    
     # read in an image to get the image shape
     im = io.imread(image_list[0])
     
@@ -356,16 +359,19 @@ def parameter_search(image_list, min_win_size, win_size_interval, overlap, plot_
         neighborhood_labels = np.unique(Order_dataframe['neighborhood_radius'])
 
         plt.figure()
-        plt.imshow(window_neighborhood)
+        plt.imshow(window_neighborhood, vmin=0, vmax=1)
+        plt.colorbar(orientation='horizontal')
         plt.yticks(np.arange(0,len(win_size_labels)),labels=win_size_labels)
         plt.ylabel('Window Size (px)')
         plt.xticks(np.arange(0,len(neighborhood_labels),2),labels=neighborhood_labels[::2], rotation='vertical')
         plt.xlabel('Neighbourhood Radius (px)')
+        plt.title('Median order parameter')
+        plt.tight_layout()
         plt.show()
 
     return Order_dataframe, window_neighborhood
 
-def parameter_comparison(Order_dataframe1, window_neighborhood1, Order_dataframe2, window_neighborhood2, savefig=True):
+def parameter_comparison(Order_dataframe1, window_neighborhood1, Order_dataframe2, window_neighborhood2, save_figures=False, save_path = ''):
     # Find the number of different windows and neighborhoods tested 
     win_size_list = sorted(np.unique(Order_dataframe1['window_size']))
     N_windows = len(win_size_list)
@@ -397,11 +403,11 @@ def parameter_comparison(Order_dataframe1, window_neighborhood1, Order_dataframe
     plt.xticks(np.arange(0,len(neighborhood_list),2),labels=neighborhood_list[::2], rotation='vertical')
     plt.ylabel('Window Size (px)')
     plt.yticks(np.arange(0,len(win_size_list)),labels=win_size_list)
-    plt.colorbar()
+    plt.colorbar(orientation='horizontal')
     plt.title('Order Parameter Difference (1st sample - 2nd sample)')
     plt.show()
-    if savefig:
-        plt.savefig('parameter_search_difference.png', format='png', dpi=300)
+    if save_figures:
+        plt.savefig(save_path + 'parameter_search_difference.png', format='png', dpi=300)
 
     # plot p-value comparison
     plt.figure()
@@ -411,9 +417,9 @@ def parameter_comparison(Order_dataframe1, window_neighborhood1, Order_dataframe
     plt.ylabel('Window Size (px)')
     plt.yticks(np.arange(0,len(win_size_list)),labels=win_size_list)
     plt.title('P-value comparison')
-    plt.colorbar()
+    plt.colorbar(orientation='horizontal')
     plt.show()
-    if savefig:
-        plt.savefig('parameter_search_p_value.png', format='png', dpi=300)
+    if save_figures:
+        plt.savefig(save_path + 'parameter_search_p_value.png', format='png', dpi=300)
         
     return order_diff, p_median, win_size_list, neighborhood_list
