@@ -1,7 +1,10 @@
 # AFT - Alignment by Fourier Transform 
 ## Python implementation
 
-For making images and movies from microscopy images in a Jupyter notebook. Requires the following packages (Version that the approach has been validated with is included in paratheses):
+For making images and movies from microscopy images in a Jupyter notebook. 
+
+We recommend creating an environment (see [instructions here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#)) with the necessary packages as detailed below.
+In addition to Jupyter notebook or Jupyter lab, AFT requires the following packages (Version that the approach has been validated with is included in paratheses):
 
 `numpy (1.20.3)`
 `scikit-image (0.18.2)`
@@ -13,7 +16,7 @@ For making images and movies from microscopy images in a Jupyter notebook. Requi
 
 # Example Usage
 
-Jupyter notebookd with examples are included in the repository. Example data can be found here (LINK TO DATA): 
+Jupyter notebooks with examples are included in the repository. Example data can be found [here](https://doi.org/10.6084/m9.figshare.15326472.v1): 
 
 The general approach is outlined below.
 
