@@ -10,4 +10,6 @@ Algorithms to calculate fibre alignment from biological images can be found in t
 
 This work builds upon and fleshes out previous workflows introduced in: [Aratyn-Schaus et al. Mol Biol Cell 2011; 22(8):1330-1339](https://www.ncbi.nlm.nih.gov/pubmed/21307339) and [Cetera et al. Nat Commun 2014; 5:1-12](http://www.ncbi.nlm.nih.gov/pubmed/25413675)
 
-See [here](https://scholar.google.co.uk/scholar?cites=4208027465964650686&as_sdt=2005&sciodt=0,5&hl=en) for a list of publications that have successfully utilised AFT!
+If you are looking for the FouRD adaptation of AFT, please refer to [this repo](https://github.com/CulleyLab/FouRD) (MATLAB version only), associated to [Aggarwal et al. J Micro 2024](https://doi.org/10.1111/jmi.13308)
+
+See [here](https://scholar.google.co.uk/scholar?cites=4208027465964650686&as_sdt=2005&sciodt=0,5&hl=en) for a list of publications that have successfully utilised AFT! 
