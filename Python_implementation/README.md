@@ -13,6 +13,7 @@ In addition to Jupyter notebook or Jupyter lab, AFT requires the following packa
 `opencv-python (4.1.1.26)`
 `pandas (1.3.0)`
 
+In some cases, it is also necessary to install `ipympl` to be able to run the matplotlib widgets in Jupyter
 
 # Example Usage
 
