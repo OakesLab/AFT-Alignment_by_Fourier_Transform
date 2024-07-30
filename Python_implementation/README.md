@@ -1,7 +1,10 @@
 # AFT - Alignment by Fourier Transform 
 ## Python implementation
 
-For making images and movies from microscopy images in a Jupyter notebook. Requires the following packages (Version that the approach has been validated with is included in paratheses):
+Python code and Jupyter notebooks with examples are included in the repository. Example data can be found [here](https://doi.org/10.6084/m9.figshare.15326472.v1).
+
+We recommend creating an environment (see [instructions here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#)) with the necessary packages as detailed below.
+AFT requires the following packages (version that the approach has been validated with is included in paratheses):
 
 `numpy (1.20.3)`
 `scikit-image (0.18.2)`
@@ -10,10 +13,9 @@ For making images and movies from microscopy images in a Jupyter notebook. Requi
 `opencv-python (4.1.1.26)`
 `pandas (1.3.0)`
 
+When working with Jupyter notebooks, you will also need to install `jupyterlab` in the environment. In some cases, installing `ipympl` will also be needed to be able to run the matplotlib widgets in the notebooks.
 
-# Example Usage
-
-Jupyter notebookd with examples are included in the repository. Example data can be found here (LINK TO DATA): 
+## Example usage
 
 The general approach is outlined below.
 
@@ -63,4 +65,4 @@ im_order_parameter = AFT.calculate_order_parameter(im_theta, neighborhood_radius
 print('The order parameter is {0}'.format(im_order_parameter))
 ```
 
-Additional examples, including doing a parameter search and measuring the order parameter for an image stack can be found in the Jupyter notebooks in the repository
+Additional examples, including doing a parameter search and measuring the order parameter for an image stack can be found in the Jupyter notebooks in the repository.
